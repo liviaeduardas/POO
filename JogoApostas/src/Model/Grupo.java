@@ -12,7 +12,7 @@ public class Grupo {
         this.participantes = new ArrayList<>();
     }
 
-    public Grupo(int id, String nome, Administrador criador, ArrayList<Participante> participantes) {
+    public Grupo(int id, String nome, Administrador criador) {
         this.id = id;
         this.nome = nome;
         this.criador = criador;

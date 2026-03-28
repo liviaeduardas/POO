@@ -1,0 +1,58 @@
+package Controller;
+import Model.Administrador;
+import Model.Participante;
+import Model.Grupo;
+import java.util.ArrayList;
+
+public class GrupoController {
+    private ArrayList<Grupo> grupos;
+    private static final int maximo = 5;
+    private int proximo;
+
+    public GrupoController(){
+        this.grupos = new ArrayList<>();
+        this.proximo = 1;
+    }
+
+    public boolean criarGrupo(String nome, Administrador administrador){
+        if(nome == null || nome.trim().isEmpty()){
+            return false;
+        }
+        if(grupos.size() >= maximo){
+            return false;
+        }
+
+        Grupo novo = new Grupo(proximo++, nome.trim(), administrador);
+        grupos.add(novo);
+        return true;
+    }
+
+    public boolean adicionarParticipante(Grupo grupo, Participante participante){
+        if(grupo == null || participante == null){
+            return false;
+        }
+        return grupo.addParticipante(participante);
+    }
+
+    public ArrayList<Participante> getRaking(Grupo grupo){
+        if(grupo == null){
+            return new ArrayList<>();
+        }
+        return grupo.getRancking();
+    }
+
+    public Grupo bucarNome(String nome){
+        for(Grupo g: grupos){
+            if(g.getNome().equalsIgnoreCase(nome.trim())){
+                return g;
+            }
+        }
+
+        return null;
+    }
+
+    public ArrayList<Grupo> getGrupos() {
+        return grupos;
+    }
+}
+
