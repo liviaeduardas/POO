@@ -9,20 +9,23 @@ public class PartidaRegular extends Partida{
     }
 
     public PartidaRegular(Clube clubeMandante, Clube clubeVisitante, LocalDate data, LocalTime hora, int golMandante, int golVisitante, boolean encerrada) {
-        super(clubeMandante, clubeVisitante, data, hora, golMandante, golVisitante, encerrada);
+        super(clubeMandante, clubeVisitante, data, hora, 0, 0, false);
     }
 
-    public String getResultado(){
-        if(!isEncerrada()){
-            return "Não foi encerrada!!!";
-        }
+    public PartidaRegular(Clube clubeMandante, Clube clubeVisitante, LocalDate data, LocalTime hora) {
+        super(clubeMandante, clubeVisitante, data, hora, 0, 0, false);
+    }
 
-        if(getGolMandante() > getGolVisitante()){
-            return "Vencedor: " + getClubeMandante().getNome();
+    public String getResultado() {
+        if (!isEncerrada()) {
+            return "Não encerrada";
+        }
+        if (getGolMandante() > getGolVisitante()) {
+            return "Mandante";
         } else if (getGolVisitante() > getGolMandante()) {
-            return "Vencedor: " + getClubeVisitante().getNome();
-        }else{
-            return "Empate!";
+            return "Visitante";
+        } else {
+            return "Empate";
         }
     }
 

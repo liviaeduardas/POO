@@ -1,8 +1,6 @@
 package Model;
 import java.util.ArrayList;
 
-import java.lang.reflect.Array;
-
 public class Participante extends Usuario{
     private int pontosTotal;
     private ArrayList<Aposta> apostas;
