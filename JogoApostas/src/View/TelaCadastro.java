@@ -4,6 +4,7 @@ import Controller.CampeonatoController;
 import Controller.PartidaController;
 import Model.Campeonato;
 import Model.Clube;
+import Model.Administrador;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,6 +46,12 @@ public class TelaCadastro extends JPanel {
     private JTextField campoGolsVisitante;
     private JButton botaoRegistrarResultado;
 
+    // aba grupo
+    private JTextField campoGrupoNome;
+    private JComboBox<String> comboParticipantesGrupo;
+    private JButton botaoCriarGrupo;
+    private JButton botaoAdicionarParticipante;
+
     private JButton botaoSair;
 
     public TelaCadastro(MainFrame mainFrame, CampeonatoController campeonatoController, PartidaController partidaController) {
@@ -69,6 +76,7 @@ public class TelaCadastro extends JPanel {
         abas.addTab("Clube",      criarAbaClube());
         abas.addTab("Partida",    criarAbaPartida());
         abas.addTab("Resultado",  criarAbaResultado());
+        abas.addTab("Grupo", criarAbaGrupo());
         add(abas, BorderLayout.CENTER);
 
         // botão sair
@@ -254,6 +262,35 @@ public class TelaCadastro extends JPanel {
         return painel;
     }
 
+    private JPanel criarAbaGrupo() {
+        JPanel painel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // criar grupo
+        gbc.gridx = 0; gbc.gridy = 0;
+        painel.add(new JLabel("Nome do grupo:"), gbc);
+        campoGrupoNome = new JTextField(20);
+        gbc.gridx = 1;
+        painel.add(campoGrupoNome, gbc);
+
+        botaoCriarGrupo = new JButton("Criar Grupo");
+        gbc.gridx = 0; gbc.gridy = 1;
+        gbc.gridwidth = 2;
+        painel.add(botaoCriarGrupo, gbc);
+        botaoCriarGrupo.addActionListener(e -> criarGrupo());
+
+        // atualiza participantes quando trocar para essa aba
+        abas.addChangeListener(e -> {
+            if (abas.getSelectedIndex() == 4) {
+                atualizarComboParticipantes();
+            }
+        });
+
+        return painel;
+    }
+
     // ===== AÇÕES =====
     private void criarCampeonato() {
         String nome = campoCampeonatoNome.getText().trim();
@@ -279,6 +316,62 @@ public class TelaCadastro extends JPanel {
         }
     }
 
+    private void criarGrupo() {
+        String nome = campoGrupoNome.getText().trim();
+        if (nome.isEmpty()) {
+            JOptionPane.showMessageDialog(mainFrame, "Digite o nome do grupo!", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        Administrador admin = mainFrame.getAdminLogado();
+        boolean criou = mainFrame.getGrupoController().criarGrupo(nome, admin);
+
+        if (criou) {
+            JOptionPane.showMessageDialog(mainFrame, "Grupo criado com sucesso!");
+            campoGrupoNome.setText("");
+        } else {
+            JOptionPane.showMessageDialog(mainFrame, "Limite de 5 grupos atingido!", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void adicionarParticipanteGrupo() {
+        String nomeParticipante = (String) comboParticipantesGrupo.getSelectedItem();
+        if (nomeParticipante == null) {
+            JOptionPane.showMessageDialog(mainFrame, "Nenhum participante disponível!", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // busca o grupo — por enquanto usa o primeiro grupo criado
+        // se quiser, adiciona um comboGrupos para selecionar qual grupo
+        java.util.ArrayList<Model.Grupo> grupos = mainFrame.getGrupoController().getGrupos();
+        if (grupos.isEmpty()) {
+            JOptionPane.showMessageDialog(mainFrame, "Crie um grupo primeiro!", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        Model.Grupo grupo = grupos.get(0);
+        Model.Participante participante = mainFrame.getLoginController().buscarNome(nomeParticipante);
+
+        if (participante == null) {
+            JOptionPane.showMessageDialog(mainFrame, "Participante não encontrado!", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        boolean adicionou = mainFrame.getGrupoController().adicionarParticipante(grupo, participante);
+
+        if (adicionou) {
+            JOptionPane.showMessageDialog(mainFrame, nomeParticipante + " adicionado ao grupo " + grupo.getNome() + "!");
+        } else {
+            JOptionPane.showMessageDialog(mainFrame, "Grupo cheio ou participante já está no grupo!", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void atualizarComboParticipantes() {
+        comboParticipantesGrupo.removeAllItems();
+        for (Model.Participante p : mainFrame.getLoginController().getParticipantes()) {
+            comboParticipantesGrupo.addItem(p.getNome());
+        }
+    }
     private void cadastrarClube() {
         String nome  = campoClubeNome.getText().trim();
         String sigla = campoClubeSigla.getText().trim();

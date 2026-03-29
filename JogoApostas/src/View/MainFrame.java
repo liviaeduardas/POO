@@ -22,6 +22,9 @@ public class MainFrame extends JFrame {
 
     private TelaLogin telaLogin;
     private TelaClassificacao telaClassificacao;
+    private TelaApostas telaApostas;
+    private TelaResultados telaResultados;
+    private TelaCadastro telaCadastro;
 
     public MainFrame() {
         loginController      = new LoginController();
@@ -32,11 +35,14 @@ public class MainFrame extends JFrame {
 
         cardLayout      = new CardLayout();
         painelPrincipal = new JPanel(cardLayout);
-
         telaLogin         = new TelaLogin(this, loginController);
         telaClassificacao = new TelaClassificacao(this, grupoController);
-        TelaCadastro telaCadastro = new TelaCadastro(this, campeonatoController, partidaController);
+        telaCadastro = new TelaCadastro(this, campeonatoController, partidaController);
+        telaApostas = new TelaApostas(this, apostaController, campeonatoController);
+        telaResultados = new TelaResultados(this, partidaController, campeonatoController, apostaController);
 
+        painelPrincipal.add(telaResultados, "telaResultados");
+        painelPrincipal.add(telaApostas, "telaApostas");
         painelPrincipal.add(telaCadastro, "telaCadastro");
         painelPrincipal.add(telaLogin,         "telaLogin");
         painelPrincipal.add(telaClassificacao, "telaClassificacao");
@@ -53,8 +59,15 @@ public class MainFrame extends JFrame {
 
     public void trocarTela(String nomeTela) {
         cardLayout.show(painelPrincipal, nomeTela);
+
         if (nomeTela.equals("telaClassificacao")) {
             telaClassificacao.atualizar();
+        }
+        if (nomeTela.equals("telaApostas")) {
+            telaApostas.atualizar();
+        }
+        if (nomeTela.equals("telaResultados")) {
+            telaResultados.atualizar();
         }
     }
 
