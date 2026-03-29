@@ -34,14 +34,14 @@ public class GrupoController {
         return grupo.addParticipante(participante);
     }
 
-    public ArrayList<Participante> getRaking(Grupo grupo){
+    public ArrayList<Participante> getRanking(Grupo grupo){
         if(grupo == null){
             return new ArrayList<>();
         }
         return grupo.getRancking();
     }
 
-    public Grupo bucarNome(String nome){
+    public Grupo buscarNome(String nome){
         for(Grupo g: grupos){
             if(g.getNome().equalsIgnoreCase(nome.trim())){
                 return g;
