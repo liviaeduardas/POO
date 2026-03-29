@@ -17,10 +17,8 @@ public class MainFrame extends JFrame {
     private PartidaController partidaController;
     private ApostaController apostaController;
 
-    // ===== adiciona esses dois =====
     private Participante participanteLogado;
     private Administrador adminLogado;
-    // ================================
 
     private TelaLogin telaLogin;
     private TelaClassificacao telaClassificacao;
@@ -58,7 +56,6 @@ public class MainFrame extends JFrame {
         }
     }
 
-    // ===== adiciona esses métodos =====
     public void setParticipanteLogado(Participante participante) {
         this.participanteLogado = participante;
     }
@@ -74,7 +71,6 @@ public class MainFrame extends JFrame {
     public Administrador getAdminLogado() {
         return adminLogado;
     }
-    // ==================================
 
     public LoginController getLoginController() {
         return loginController;
