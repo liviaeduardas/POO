@@ -123,8 +123,8 @@ public class TelaLogin extends JPanel {
     private void pedirNome(Participante participante) {
         String nome = JOptionPane.showInputDialog(
                 mainFrame,
-                "Bem-vindo!\nDigite seu nome:",
-                "Identificação",
+                "Bem-vindo! É seu primeiro acesso.\nDigite seu nome:",
+                "Cadastro",
                 JOptionPane.PLAIN_MESSAGE
         );
 
@@ -134,7 +134,6 @@ public class TelaLogin extends JPanel {
         }
 
         Participante existente = loginController.buscarNome(nome);
-
         if (existente != null) {
             mainFrame.setParticipanteLogado(existente);
             mainFrame.trocarTela("telaApostas");
@@ -142,15 +141,51 @@ public class TelaLogin extends JPanel {
         }
 
         boolean cadastrou = loginController.cadastrar(participante, nome);
-
         if (!cadastrou) {
-            JOptionPane.showMessageDialog(
-                    mainFrame,
+            JOptionPane.showMessageDialog(mainFrame,
                     "Limite de 5 participantes atingido!",
-                    "Erro",
-                    JOptionPane.ERROR_MESSAGE
-            );
+                    "Erro", JOptionPane.ERROR_MESSAGE);
             return;
+        }
+
+        // depois de cadastrar, pergunta o grupo
+        escolherGrupo(participante);
+    }
+
+    private void escolherGrupo(Participante participante) {
+        java.util.ArrayList<Model.Grupo> grupos = mainFrame.getGrupoController().getGrupos();
+
+        if (grupos.isEmpty()) {
+            JOptionPane.showMessageDialog(mainFrame,
+                    "Nenhum grupo disponível no momento.\nVocê pode entrar em um grupo depois.",
+                    "Aviso", JOptionPane.WARNING_MESSAGE);
+            mainFrame.setParticipanteLogado(participante);
+            mainFrame.trocarTela("telaApostas");
+            return;
+        }
+
+        String[] nomesGrupos = grupos.stream()
+                .map(Model.Grupo::getNome)
+                .toArray(String[]::new);
+
+        String grupoEscolhido = (String) JOptionPane.showInputDialog(
+                mainFrame,
+                "Escolha seu grupo:",
+                "Entrar em um grupo",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                nomesGrupos,
+                nomesGrupos[0]
+        );
+
+        if (grupoEscolhido != null) {
+            Model.Grupo grupo = mainFrame.getGrupoController().buscarNome(grupoEscolhido);
+            boolean entrou = mainFrame.getGrupoController().adicionarParticipante(grupo, participante);
+            if (entrou) {
+                JOptionPane.showMessageDialog(mainFrame, "Você entrou no grupo " + grupoEscolhido + "!");
+            } else {
+                JOptionPane.showMessageDialog(mainFrame, "Grupo cheio!", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
         }
 
         mainFrame.setParticipanteLogado(participante);
