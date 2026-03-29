@@ -9,6 +9,11 @@ public class Campeonato {
     private List<Clube> clubes;
     private List<Partida> partidas;
 
+    public Campeonato(){
+        this.clubes = new ArrayList<>();
+        this.partidas = new ArrayList<>();
+    }
+
     public Campeonato(String nome, int ano) {
         this.nome = nome;
         this.ano = ano;

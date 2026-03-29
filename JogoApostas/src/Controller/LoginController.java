@@ -26,6 +26,7 @@ public class LoginController {
             return administrador;
         }
         if(email.equals(participanteUsuario) && senha.equals(participanteSenha)){
+            Participante novo = new Participante();
             return new Participante();
         }
 
@@ -33,6 +34,9 @@ public class LoginController {
     }
 
     public boolean cadastrar(Participante participante, String nome){
+        if(participante == null){
+            return false;
+        }
         if(nome == null || nome.trim().isEmpty()){
             return false;
         }
