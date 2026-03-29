@@ -123,13 +123,21 @@ public class TelaLogin extends JPanel {
     private void pedirNome(Participante participante) {
         String nome = JOptionPane.showInputDialog(
                 mainFrame,
-                "Bem-vindo! É seu primeiro acesso.\nDigite seu nome:",
-                "Cadastro",
+                "Bem-vindo!\nDigite seu nome:",
+                "Identificação",
                 JOptionPane.PLAIN_MESSAGE
         );
 
         if (nome == null || nome.trim().isEmpty()) {
             labelErro.setText("Nome obrigatório para continuar!");
+            return;
+        }
+
+        Participante existente = loginController.buscarNome(nome);
+
+        if (existente != null) {
+            mainFrame.setParticipanteLogado(existente);
+            mainFrame.trocarTela("telaApostas");
             return;
         }
 
