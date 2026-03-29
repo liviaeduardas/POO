@@ -35,7 +35,9 @@ public class MainFrame extends JFrame {
 
         telaLogin         = new TelaLogin(this, loginController);
         telaClassificacao = new TelaClassificacao(this, grupoController);
+        TelaCadastro telaCadastro = new TelaCadastro(this, campeonatoController, partidaController);
 
+        painelPrincipal.add(telaCadastro, "telaCadastro");
         painelPrincipal.add(telaLogin,         "telaLogin");
         painelPrincipal.add(telaClassificacao, "telaClassificacao");
 
