@@ -14,18 +14,20 @@ public class GrupoController {
         this.proximo = 1;
     }
 
-    public boolean criarGrupo(String nome, Administrador administrador){
-        if(nome == null || nome.trim().isEmpty()){
+    public boolean criarGrupoPorParticipante(String nome, Participante criador) {
+        if (nome == null || nome.trim().isEmpty()) {
             return false;
         }
-        if(grupos.size() >= maximo){
+        if (grupos.size() >= 5) {
             return false;
         }
 
-        Grupo novo = new Grupo(proximo++, nome.trim(), administrador);
-        grupos.add(novo);
+        Grupo novoGrupo = new Grupo(proximo++, nome.trim(), null);
+        grupos.add(novoGrupo);
         return true;
     }
+
+
 
     public boolean adicionarParticipante(Grupo grupo, Participante participante){
         if(grupo == null || participante == null){

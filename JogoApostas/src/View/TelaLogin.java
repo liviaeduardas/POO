@@ -111,7 +111,7 @@ public class TelaLogin extends JPanel {
     private void pedirNome(Participante participante) {
         String nome = JOptionPane.showInputDialog(
                 mainFrame,
-                "Bem-vindo! É seu primeiro acesso.\nDigite seu nome:",
+                "Digite seu nome:",
                 "Cadastro",
                 JOptionPane.PLAIN_MESSAGE
         );
