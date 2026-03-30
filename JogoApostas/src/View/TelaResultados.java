@@ -28,8 +28,7 @@ public class TelaResultados extends JPanel {
     private JButton botaoAtualizar;
     private JButton botaoVoltar;
 
-    public TelaResultados(MainFrame mainFrame, PartidaController partidaController,
-                          CampeonatoController campeonatoController, ApostaController apostaController) {
+    public TelaResultados(MainFrame mainFrame, PartidaController partidaController, CampeonatoController campeonatoController, ApostaController apostaController) {
         this.mainFrame = mainFrame;
         this.partidaController = partidaController;
         this.campeonatoController = campeonatoController;
@@ -41,9 +40,7 @@ public class TelaResultados extends JPanel {
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // ===== TOPO =====
         JPanel painelTopo = new JPanel(new BorderLayout());
-
         JLabel titulo = new JLabel("Resultados das Partidas", SwingConstants.CENTER);
         titulo.setFont(new Font("Arial", Font.BOLD, 20));
         painelTopo.add(titulo, BorderLayout.NORTH);
@@ -63,10 +60,8 @@ public class TelaResultados extends JPanel {
         painelTopo.add(painelFiltro, BorderLayout.SOUTH);
         add(painelTopo, BorderLayout.NORTH);
 
-        // ===== ABAS =====
         abas = new JTabbedPane();
 
-        // tabela partidas pendentes
         String[] colunasPendentes = {"Mandante", "Visitante", "Data", "Hora"};
         modeloPendentes = new javax.swing.table.DefaultTableModel(colunasPendentes, 0) {
             @Override
@@ -81,7 +76,6 @@ public class TelaResultados extends JPanel {
         centralizarColunas(tabelaPendentes, colunasPendentes.length);
         abas.addTab("Aguardando resultado", new JScrollPane(tabelaPendentes));
 
-        // tabela partidas finalizadas
         String[] colunasFinalizadas = {"Mandante", "Visitante", "Placar", "Resultado"};
         modeloFinalizadas = new javax.swing.table.DefaultTableModel(colunasFinalizadas, 0) {
             @Override
@@ -98,9 +92,8 @@ public class TelaResultados extends JPanel {
 
         add(abas, BorderLayout.CENTER);
 
-        // ===== RODAPÉ =====
-        JPanel painelRodape = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
 
+        JPanel painelRodape = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         botaoVoltar = new JButton("Voltar");
         botaoVoltar.setFont(new Font("Arial", Font.BOLD, 13));
         botaoVoltar.addActionListener(e -> mainFrame.trocarTela("telaApostas"));
@@ -119,7 +112,6 @@ public class TelaResultados extends JPanel {
         Campeonato campeonato = campeonatoController.buscarNome(nomeCampeonato);
         if (campeonato == null) return;
 
-        // pendentes
         List<Partida> pendentes = partidaController.getPartidasPendentes(campeonato);
         for (Partida p : pendentes) {
             modeloPendentes.addRow(new Object[]{
@@ -130,7 +122,6 @@ public class TelaResultados extends JPanel {
             });
         }
 
-        // finalizadas
         List<Partida> finalizadas = partidaController.getPartidasFinalizadas(campeonato);
         for (Partida p : finalizadas) {
             String placar = p.getGolMandante() + " x " + p.getGolVisitante();

@@ -45,19 +45,16 @@ public class TelaApostas extends JPanel {
         gbc.insets = new Insets(8, 8, 8, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // titulo
         labelBemVindo = new JLabel("Bem-vindo!", SwingConstants.CENTER);
         labelBemVindo.setFont(new Font("Arial", Font.BOLD, 20));
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
         card.add(labelBemVindo, gbc);
 
-        // subtitulo
         JLabel subtitulo = new JLabel("Registre sua aposta", SwingConstants.CENTER);
         subtitulo.setFont(new Font("Arial", Font.PLAIN, 13));
         gbc.gridy = 1;
         card.add(subtitulo, gbc);
 
-        // campeonato
         gbc.gridwidth = 1;
         gbc.gridx = 0; gbc.gridy = 2;
         card.add(new JLabel("Campeonato:"), gbc);
@@ -67,7 +64,6 @@ public class TelaApostas extends JPanel {
         gbc.gridx = 1;
         card.add(comboCampeonato, gbc);
 
-        // partida
         gbc.gridx = 0; gbc.gridy = 3;
         card.add(new JLabel("Partida:"), gbc);
         comboPartida = new JComboBox<>();
@@ -75,9 +71,9 @@ public class TelaApostas extends JPanel {
         gbc.gridx = 1;
         card.add(comboPartida, gbc);
 
-        // placar
         gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 2;
         card.add(new JLabel("Placar previsto:", SwingConstants.CENTER), gbc);
+
         JPanel painelGols = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 0));
         painelGols.setBackground(FUNDO);
 
@@ -98,20 +94,17 @@ public class TelaApostas extends JPanel {
         gbc.gridy = 5;
         card.add(painelGols, gbc);
 
-        // label info
         labelInfo = new JLabel("", SwingConstants.CENTER);
         labelInfo.setForeground(VERMELHO);
         labelInfo.setFont(new Font("Arial", Font.PLAIN, 12));
         gbc.gridy = 6;
         card.add(labelInfo, gbc);
 
-        // botao registrar
         botaoApostar = criarBotao("Registrar Aposta");
         botaoApostar.addActionListener(e -> registrarAposta());
         gbc.gridy = 7;
         card.add(botaoApostar, gbc);
 
-        // botoes rodape
         JPanel rodape = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         rodape.setBackground(FUNDO);
 
@@ -144,16 +137,9 @@ public class TelaApostas extends JPanel {
 
     private void registrarAposta() {
         Participante participante = mainFrame.getParticipanteLogado();
-        if (participante == null) {
-            JOptionPane.showMessageDialog(mainFrame, "Nenhum participante logado", "Erro", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
 
         String nomePartida = (String) comboPartida.getSelectedItem();
-        if (nomePartida == null || nomePartida.isEmpty()) {
-            JOptionPane.showMessageDialog(mainFrame, "Selecione uma partida", "Erro", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+        if (nomePartida == null) return;
 
         String golsMStr = campoGolsMandante.getText().trim();
         String golsVStr = campoGolsVisitante.getText().trim();
@@ -167,16 +153,8 @@ public class TelaApostas extends JPanel {
             int golsM = Integer.parseInt(golsMStr);
             int golsV = Integer.parseInt(golsVStr);
 
-            if (golsM < 0 || golsV < 0) {
-                JOptionPane.showMessageDialog(mainFrame, "Gols não podem ser negativos", "Erro", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
             Partida partida = buscarPartidaPorString(nomePartida);
-            if (partida == null) {
-                JOptionPane.showMessageDialog(mainFrame, "Partida não encontrada", "Erro", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+            if (partida == null) return;
 
             boolean apostou = apostaController.registrarAposta(participante, partida, golsM, golsV);
 
@@ -184,15 +162,13 @@ public class TelaApostas extends JPanel {
                 JOptionPane.showMessageDialog(mainFrame, "Aposta registrada! Palpite: " + golsM + " x " + golsV);
                 campoGolsMandante.setText("");
                 campoGolsVisitante.setText("");
-                labelInfo.setText("Aposta registrada!");
+                labelInfo.setText("Aposta registrada");
             } else {
-                JOptionPane.showMessageDialog(mainFrame,
-                        "Não foi possível registrar a aposta!\nVerifique se faltam mais de 20 min para a partida e se você já não apostou nela.",
-                        "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(mainFrame, "Não foi possível registrar a aposta", "Erro", JOptionPane.ERROR_MESSAGE);
             }
 
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(mainFrame, "Digite apenas números nos campos de gols!", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(mainFrame, "Digite apenas números nos campos de gols", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -231,13 +207,7 @@ public class TelaApostas extends JPanel {
         Campeonato campeonato = campeonatoController.buscarNome(nomeCampeonato);
         if (campeonato == null) return;
 
-        List<Partida> pendentes = campeonato.getPartidasPendentes();
-        if (pendentes.isEmpty()) {
-            comboPartida.addItem("Nenhuma partida disponível");
-            return;
-        }
-
-        for (Partida p : pendentes) {
+        for (Partida p : campeonato.getPartidasPendentes()) {
             comboPartida.addItem(p.toString());
         }
     }

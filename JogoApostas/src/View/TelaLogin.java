@@ -28,7 +28,6 @@ public class TelaLogin extends JPanel {
         setBackground(VERMELHO);
         setLayout(new GridBagLayout());
 
-        //Tela interna
         JPanel card = new JPanel(new GridBagLayout());
         card.setBackground(FUNDO);
         card.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
@@ -36,40 +35,34 @@ public class TelaLogin extends JPanel {
         gbc.insets = new Insets(8, 8, 8, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Título
+
         JLabel titulo = new JLabel("Sistema de Apostas", SwingConstants.CENTER);
         titulo.setFont(new Font("Arial", Font.BOLD, 22));
         titulo.setForeground(Color.BLACK);
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
         card.add(titulo, gbc);
 
-        // Label Usuário
         gbc.gridwidth = 1;
         gbc.gridx = 0; gbc.gridy = 1;
         card.add(new JLabel("Usuário:"), gbc);
 
-        // Campo Usuário
         campoUsuario = new JTextField(16);
         gbc.gridx = 1;
         card.add(campoUsuario, gbc);
 
-        // Label Senha
         gbc.gridx = 0; gbc.gridy = 2;
         card.add(new JLabel("Senha:"), gbc);
 
-        // Campo Senha
         campoSenha = new JPasswordField(16);
         gbc.gridx = 1;
         card.add(campoSenha, gbc);
 
-        // Label Erro
         labelErro = new JLabel("", SwingConstants.CENTER);
         labelErro.setForeground(VERMELHO);
         labelErro.setFont(new Font("Arial", Font.PLAIN, 12));
         gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
         card.add(labelErro, gbc);
 
-        // Botão Entrar
         botaoEntrar = new JButton("Entrar");
         botaoEntrar.setBackground(VERMELHO);
         botaoEntrar.setForeground(Color.WHITE);
@@ -87,12 +80,6 @@ public class TelaLogin extends JPanel {
     private void realizarLogin() {
         String login = campoUsuario.getText().trim();
         String senha = new String(campoSenha.getPassword()).trim();
-
-        if (login.isEmpty() || senha.isEmpty()) {
-            labelErro.setText("Preencha todos os campos!");
-            return;
-        }
-
         Usuario usuario = loginController.autenticar(login, senha);
 
         if (usuario == null) {
