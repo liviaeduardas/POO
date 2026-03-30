@@ -117,6 +117,10 @@ public class TelaApostas extends JPanel {
         botaoSair = criarBotao("Sair");
         botaoSair.addActionListener(e -> mainFrame.trocarTela("telaLogin"));
 
+        JButton botaoGrupos = new JButton("Grupos");
+        botaoGrupos.setFont(new Font("Arial", Font.PLAIN, 13));
+        botaoGrupos.addActionListener(e -> abrirDialogGrupos());
+        rodape.add(botaoGrupos);
         rodape.add(botaoVerApostas);
         rodape.add(botaoClassificacao);
         rodape.add(botaoSair);
@@ -125,6 +129,92 @@ public class TelaApostas extends JPanel {
         card.add(rodape, gbc);
 
         add(card);
+    }
+
+    private void abrirDialogGrupos() {
+        String[] opcoes = {"Criar novo grupo", "Entrar em um grupo existente"};
+        int escolha = JOptionPane.showOptionDialog(
+                mainFrame,
+                "O que deseja fazer?",
+                "Grupos",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                opcoes,
+                opcoes[0]
+        );
+
+        if (escolha == 0) {
+            criarGrupo();
+        } else if (escolha == 1) {
+            entrarEmGrupo();
+        }
+    }
+
+    private void criarGrupo() {
+        Participante participante = mainFrame.getParticipanteLogado();
+        if (participante == null) return;
+
+        String nome = JOptionPane.showInputDialog(
+                mainFrame,
+                "Digite o nome do novo grupo:",
+                "Criar Grupo",
+                JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (nome == null || nome.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(mainFrame, "Nome do grupo não pode ser vazio!", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+
+        boolean criou = mainFrame.getGrupoController().criarGrupoPorParticipante(nome.trim(), participante);
+
+        if (criou) {
+
+            Model.Grupo grupo = mainFrame.getGrupoController().buscarNome(nome.trim());
+            mainFrame.getGrupoController().adicionarParticipante(grupo, participante);
+            JOptionPane.showMessageDialog(mainFrame, "Grupo \"" + nome.trim() + "\" criado! Você já está nele.");
+        } else {
+            JOptionPane.showMessageDialog(mainFrame, "Limite de 5 grupos atingido!", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void entrarEmGrupo() {
+        Participante participante = mainFrame.getParticipanteLogado();
+        if (participante == null) return;
+
+        java.util.ArrayList<Model.Grupo> grupos = mainFrame.getGrupoController().getGrupos();
+
+        if (grupos.isEmpty()) {
+            JOptionPane.showMessageDialog(mainFrame, "Nenhum grupo disponível ainda!", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String[] nomesGrupos = grupos.stream()
+                .map(Model.Grupo::getNome)
+                .toArray(String[]::new);
+
+        String grupoEscolhido = (String) JOptionPane.showInputDialog(
+                mainFrame,
+                "Escolha o grupo:",
+                "Entrar em Grupo",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                nomesGrupos,
+                nomesGrupos[0]
+        );
+
+        if (grupoEscolhido == null) return;
+
+        Model.Grupo grupo = mainFrame.getGrupoController().buscarNome(grupoEscolhido);
+        boolean entrou = mainFrame.getGrupoController().adicionarParticipante(grupo, participante);
+
+        if (entrou) {
+            JOptionPane.showMessageDialog(mainFrame, "Você entrou no grupo \"" + grupoEscolhido + "\"!");
+        } else {
+            JOptionPane.showMessageDialog(mainFrame, "Grupo cheio ou você já está nesse grupo!", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private JButton criarBotao(String texto) {

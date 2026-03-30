@@ -5,14 +5,14 @@ import java.util.ArrayList;
 public class Grupo {
     private int id;
     private String nome;
-    private Administrador criador;
+    private String criador;
     private ArrayList<Participante> participantes;
 
     public Grupo(){
         this.participantes = new ArrayList<>();
     }
 
-    public Grupo(int id, String nome, Administrador criador) {
+    public Grupo(int id, String nome, String criador) {
         this.id = id;
         this.nome = nome;
         this.criador = criador;
@@ -57,11 +57,11 @@ public class Grupo {
         this.nome = nome;
     }
 
-    public Administrador getCriador() {
+    public String getCriador() {
         return criador;
     }
 
-    public void setCriador(Administrador criador) {
+    public void setCriador(String criador) {
         this.criador = criador;
     }
 

@@ -41,9 +41,7 @@ public class TelaCadastro extends JPanel {
     private JTextField campoGolsVisitante;
     private JButton botaoRegistrarResultado;
 
-    private JTextField campoGrupoNome;
     private JComboBox<String> comboParticipantesGrupo;
-    private JButton botaoCriarGrupo;
     private JButton botaoAdicionarParticipante;
 
     private JButton botaoSair;
@@ -85,7 +83,6 @@ public class TelaCadastro extends JPanel {
         abas.addTab("Clube",      criarAbaClube());
         abas.addTab("Partida",    criarAbaPartida());
         abas.addTab("Resultado",  criarAbaResultado());
-        abas.addTab("Grupo",      criarAbaGrupo());
 
         painelCentral.add(abas, BorderLayout.CENTER);
         add(painelCentral, BorderLayout.CENTER);
@@ -305,33 +302,7 @@ public class TelaCadastro extends JPanel {
         return painel;
     }
 
-    private JPanel criarAbaGrupo() {
-        JPanel painel = criarPainelAba();
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        gbc.gridx = 0; gbc.gridy = 0;
-        painel.add(criarLabel("Nome do grupo:"), gbc);
-        campoGrupoNome = criarCampo();
-        gbc.gridx = 1;
-        painel.add(campoGrupoNome, gbc);
-
-        botaoCriarGrupo = criarBotao("Criar Grupo");
-        gbc.gridx = 0; gbc.gridy = 1;
-        gbc.gridwidth = 2;
-        painel.add(botaoCriarGrupo, gbc);
-
-        botaoCriarGrupo.addActionListener(e -> criarGrupo());
-
-        abas.addChangeListener(e -> {
-            if (abas.getSelectedIndex() == 4) {
-                atualizarComboParticipantes();
-            }
-        });
-
-        return painel;
-    }
 
     private void criarCampeonato() {
         String nome = campoCampeonatoNome.getText().trim();
@@ -352,23 +323,7 @@ public class TelaCadastro extends JPanel {
         }
     }
 
-    private void criarGrupo() {
-        String nome = campoGrupoNome.getText().trim();
-        if (nome.isEmpty()) {
-            JOptionPane.showMessageDialog(mainFrame, "Digite o nome do grupo!", "Erro", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
 
-        Administrador admin = mainFrame.getAdminLogado();
-        boolean criou = mainFrame.getGrupoController().criarGrupo(nome, admin);
-
-        if (criou) {
-            JOptionPane.showMessageDialog(mainFrame, "Grupo criado com sucesso!");
-            campoGrupoNome.setText("");
-        } else {
-            JOptionPane.showMessageDialog(mainFrame, "Limite de 5 grupos atingido!", "Erro", JOptionPane.ERROR_MESSAGE);
-        }
-    }
 
     private void adicionarParticipanteGrupo() {
         String nomeParticipante = (String) comboParticipantesGrupo.getSelectedItem();
