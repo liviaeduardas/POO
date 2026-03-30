@@ -20,12 +20,12 @@ public class LoginController {
         this.proximo = 1;
     }
 
-    public Usuario autenticar(String email, String senha){
-        if(email.equals(admUsuario) && senha.equals(admSenha)){
+    public Usuario autenticar(String usuario, String senha){
+        if(usuario.equals(admUsuario) && senha.equals(admSenha)){
             administrador.autenticar();
             return administrador;
         }
-        if(email.equals(participanteUsuario) && senha.equals(participanteSenha)){
+        if(usuario.equals(participanteUsuario) && senha.equals(participanteSenha)){
             Participante novo = new Participante();
             return new Participante();
         }

@@ -1,5 +1,4 @@
 package View;
-
 import Controller.LoginController;
 import Model.Administrador;
 import Model.Participante;
@@ -9,14 +8,15 @@ import javax.swing.*;
 import java.awt.*;
 
 public class TelaLogin extends JPanel {
-
     private MainFrame mainFrame;
     private LoginController loginController;
-
-    private JTextField campoEmail;
+    private JTextField campoUsuario;
     private JPasswordField campoSenha;
     private JButton botaoEntrar;
     private JLabel labelErro;
+
+    private static final Color VERMELHO = new Color(0x95, 0x0E, 0x17);
+    private static final Color FUNDO    = new Color(0xFF, 0xF5, 0xF5);
 
     public TelaLogin(MainFrame mainFrame, LoginController loginController) {
         this.mainFrame = mainFrame;
@@ -25,83 +25,71 @@ public class TelaLogin extends JPanel {
     }
 
     private void inicializarComponentes() {
+        setBackground(VERMELHO);
         setLayout(new GridBagLayout());
+
+        JPanel card = new JPanel(new GridBagLayout());
+        card.setBackground(FUNDO);
+        card.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 8, 8, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // título
+
         JLabel titulo = new JLabel("Sistema de Apostas", SwingConstants.CENTER);
         titulo.setFont(new Font("Arial", Font.BOLD, 22));
-        gbc.gridx = 0; gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        add(titulo, gbc);
+        titulo.setForeground(Color.BLACK);
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
+        card.add(titulo, gbc);
 
-        // subtítulo
-        JLabel subtitulo = new JLabel("Faça login para continuar", SwingConstants.CENTER);
-        subtitulo.setFont(new Font("Arial", Font.PLAIN, 14));
-        gbc.gridy = 1;
-        add(subtitulo, gbc);
-
-        // label email
         gbc.gridwidth = 1;
+        gbc.gridx = 0; gbc.gridy = 1;
+        card.add(new JLabel("Usuário:"), gbc);
+
+        campoUsuario = new JTextField(16);
+        gbc.gridx = 1;
+        card.add(campoUsuario, gbc);
+
         gbc.gridx = 0; gbc.gridy = 2;
-        add(new JLabel("Email:"), gbc);
+        card.add(new JLabel("Senha:"), gbc);
 
-        // campo email
-        campoEmail = new JTextField(20);
+        campoSenha = new JPasswordField(16);
         gbc.gridx = 1;
-        add(campoEmail, gbc);
+        card.add(campoSenha, gbc);
 
-        // label senha
-        gbc.gridx = 0; gbc.gridy = 3;
-        add(new JLabel("Senha:"), gbc);
-
-        // campo senha
-        campoSenha = new JPasswordField(20);
-        gbc.gridx = 1;
-        add(campoSenha, gbc);
-
-        // label erro
         labelErro = new JLabel("", SwingConstants.CENTER);
-        labelErro.setForeground(Color.RED);
+        labelErro.setForeground(VERMELHO);
         labelErro.setFont(new Font("Arial", Font.PLAIN, 12));
-        gbc.gridx = 0; gbc.gridy = 4;
-        gbc.gridwidth = 2;
-        add(labelErro, gbc);
+        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
+        card.add(labelErro, gbc);
 
-        // botão entrar
         botaoEntrar = new JButton("Entrar");
+        botaoEntrar.setBackground(VERMELHO);
+        botaoEntrar.setForeground(Color.WHITE);
         botaoEntrar.setFont(new Font("Arial", Font.BOLD, 14));
-        gbc.gridy = 5;
-        add(botaoEntrar, gbc);
+        botaoEntrar.setOpaque(true);
+        gbc.gridy = 4;
+        card.add(botaoEntrar, gbc);
 
-        // ação do botão
         botaoEntrar.addActionListener(e -> realizarLogin());
-
-        // pressionar Enter no campo senha também faz login
         campoSenha.addActionListener(e -> realizarLogin());
+
+        add(card);
     }
 
     private void realizarLogin() {
-        String email = campoEmail.getText().trim();
+        String login = campoUsuario.getText().trim();
         String senha = new String(campoSenha.getPassword()).trim();
-
-        if (email.isEmpty() || senha.isEmpty()) {
-            labelErro.setText("Preencha todos os campos!");
-            return;
-        }
-
-        Usuario usuario = loginController.autenticar(email, senha);
+        Usuario usuario = loginController.autenticar(login, senha);
 
         if (usuario == null) {
-            labelErro.setText("Email ou senha incorretos!");
+            labelErro.setText("Usuário ou senha incorretos!");
             campoSenha.setText("");
             return;
         }
 
         labelErro.setText("");
-        campoEmail.setText("");
+        campoUsuario.setText("");
         campoSenha.setText("");
 
         if (usuario instanceof Administrador) {
@@ -148,7 +136,6 @@ public class TelaLogin extends JPanel {
             return;
         }
 
-        // depois de cadastrar, pergunta o grupo
         escolherGrupo(participante);
     }
 

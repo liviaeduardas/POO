@@ -8,8 +8,8 @@ public class Administrador extends Usuario{
         this.nivelAesso = "TOTAL";
     }
 
-    public Administrador(int id, String senha, String email, String nome) {
-        super(id, senha, email, nome);
+    public Administrador(int id, String senha, String usuario, String nome) {
+        super(id, senha, usuario, nome);
         this.nivelAesso = "TOTAL";
     }
 
