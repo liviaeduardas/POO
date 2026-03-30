@@ -11,8 +11,8 @@ public class Participante extends Usuario{
         this.apostas = new ArrayList<>();
     }
 
-    public Participante(int id, String senha, String email, String nome) {
-        super(id, senha, email, nome);
+    public Participante(int id, String senha, String usuario, String nome) {
+        super(id, senha, usuario, nome);
         this.pontosTotal = 0;
     }
 
