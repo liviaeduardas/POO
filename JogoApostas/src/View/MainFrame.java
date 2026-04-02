@@ -27,15 +27,15 @@ public class MainFrame extends JFrame {
     private TelaCadastro telaCadastro;
 
     public MainFrame() {
-        loginController      = new LoginController();
-        grupoController      = new GrupoController();
+        loginController = new LoginController();
+        grupoController = new GrupoController();
         campeonatoController = new CampeonatoController();
-        partidaController    = new PartidaController();
-        apostaController     = new ApostaController();
+        partidaController = new PartidaController();
+        apostaController = new ApostaController();
 
-        cardLayout      = new CardLayout();
+        cardLayout = new CardLayout();
         painelPrincipal = new JPanel(cardLayout);
-        telaLogin         = new TelaLogin(this, loginController);
+        telaLogin = new TelaLogin(this, loginController);
         telaClassificacao = new TelaClassificacao(this, grupoController);
         telaCadastro = new TelaCadastro(this, campeonatoController, partidaController);
         telaApostas = new TelaApostas(this, apostaController, campeonatoController);
@@ -44,7 +44,7 @@ public class MainFrame extends JFrame {
         painelPrincipal.add(telaResultados, "telaResultados");
         painelPrincipal.add(telaApostas, "telaApostas");
         painelPrincipal.add(telaCadastro, "telaCadastro");
-        painelPrincipal.add(telaLogin,         "telaLogin");
+        painelPrincipal.add(telaLogin, "telaLogin");
         painelPrincipal.add(telaClassificacao, "telaClassificacao");
 
         setTitle("Sistema de Apostas");
