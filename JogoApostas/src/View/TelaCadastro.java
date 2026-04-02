@@ -332,18 +332,17 @@ public class TelaCadastro extends JPanel {
     private void criarCampeonato() {
         String nome = campoCampeonatoNome.getText().trim();
         String anoStr = campoCampeonatoAno.getText().trim();
-        try {
-            int ano = Integer.parseInt(anoStr);
-            boolean criou = campeonatoController.criarCampeonato(nome, ano);
-            if (criou) {
-                JOptionPane.showMessageDialog(mainFrame, "Campeonato criado com sucesso!");
-                campoCampeonatoNome.setText("");
-                campoCampeonatoAno.setText("");
-            } else {
-                JOptionPane.showMessageDialog(mainFrame, "Erro ao criar campeonato!", "Erro", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(mainFrame, "Ano inválido!", "Erro", JOptionPane.ERROR_MESSAGE);
+
+        int ano = Integer.parseInt(anoStr);
+
+        boolean criou = campeonatoController.criarCampeonato(nome, ano);
+
+        if (criou) {
+            JOptionPane.showMessageDialog(mainFrame, "Campeonato criado com sucesso!");
+            campoCampeonatoNome.setText("");
+            campoCampeonatoAno.setText("");
+        } else {
+            JOptionPane.showMessageDialog(mainFrame, "Erro ao criar campeonato!", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
