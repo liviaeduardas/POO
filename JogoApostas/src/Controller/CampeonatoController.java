@@ -13,11 +13,11 @@ public class CampeonatoController {
         this.clubes = new ArrayList<>();
     }
 
-    public boolean criarCampeonato(String nome, String categoria) {
+    public boolean criarCampeonato(String nome, int ano) {
         if (nome == null || nome.trim().isEmpty()) {
             return false;
         }
-        Campeonato novo = new Campeonato(nome.trim(), categoria);
+        Campeonato novo = new Campeonato(nome.trim(), ano);
         campeonatos.add(novo);
         return true;
     }

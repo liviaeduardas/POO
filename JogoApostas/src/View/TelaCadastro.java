@@ -19,7 +19,7 @@ public class TelaCadastro extends JPanel {
     private CardLayout cardLayout;
 
     private JTextField campoCampeonatoNome;
-    private JTextField campoCampeonatoCategoria;
+    private JTextField campoCampeonatoAno;
 
     private JTextField campoClubeNome;
     private JTextField campoClubeSigla;
@@ -181,11 +181,11 @@ public class TelaCadastro extends JPanel {
         painel.add(campoCampeonatoNome, gbc);
 
         gbc.gridx = 0; gbc.gridy = 1; gbc.insets = new Insets(10, 0, 2, 16);
-        painel.add(new JLabel("Categoria:"), gbc);
-        campoCampeonatoCategoria = new JTextField();
-        campoCampeonatoCategoria.setPreferredSize(new Dimension(260, 34));
+        painel.add(new JLabel("Ano:"), gbc);
+        campoCampeonatoAno = new JTextField();
+        campoCampeonatoAno.setPreferredSize(new Dimension(260, 34));
         gbc.gridx = 1; gbc.insets = new Insets(10, 0, 2, 0);
-        painel.add(campoCampeonatoCategoria, gbc);
+        painel.add(campoCampeonatoAno, gbc);
 
         JButton botao = criarBotaoAcao("Criar Campeonato");
         botao.addActionListener(e -> criarCampeonato());
@@ -331,16 +331,19 @@ public class TelaCadastro extends JPanel {
 
     private void criarCampeonato() {
         String nome = campoCampeonatoNome.getText().trim();
-        String categoria = campoCampeonatoCategoria.getText().trim();
-
-        boolean criou = campeonatoController.criarCampeonato(nome, categoria);
-
-        if (criou) {
-            JOptionPane.showMessageDialog(mainFrame, "Campeonato criado com sucesso!");
-            campoCampeonatoNome.setText("");
-            campoCampeonatoCategoria.setText("");
-        } else {
-            JOptionPane.showMessageDialog(mainFrame, "Erro ao criar campeonato!", "Erro", JOptionPane.ERROR_MESSAGE);
+        String anoStr = campoCampeonatoAno.getText().trim();
+        try {
+            int ano = Integer.parseInt(anoStr);
+            boolean criou = campeonatoController.criarCampeonato(nome, ano);
+            if (criou) {
+                JOptionPane.showMessageDialog(mainFrame, "Campeonato criado com sucesso!");
+                campoCampeonatoNome.setText("");
+                campoCampeonatoAno.setText("");
+            } else {
+                JOptionPane.showMessageDialog(mainFrame, "Erro ao criar campeonato!", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(mainFrame, "Ano inválido!", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
