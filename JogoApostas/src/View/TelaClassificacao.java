@@ -19,9 +19,9 @@ public class TelaClassificacao extends JPanel {
     private javax.swing.table.DefaultTableModel modeloTabela;
     private JLabel labelInfo;
 
-    private static final Color VERMELHO     = new Color(0x95, 0x0E, 0x17);
+    private static final Color VERMELHO = new Color(0x95, 0x0E, 0x17);
     private static final Color VERMELHO_ESC = new Color(0x70, 0x0A, 0x11);
-    private static final Color FUNDO        = new Color(0xFF, 0xF5, 0xF5);
+    private static final Color FUNDO = new Color(0xFF, 0xF5, 0xF5);
 
     public TelaClassificacao(MainFrame mainFrame, GrupoController grupoController) {
         this.mainFrame = mainFrame;

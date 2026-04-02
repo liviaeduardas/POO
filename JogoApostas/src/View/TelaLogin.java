@@ -16,7 +16,7 @@ public class TelaLogin extends JPanel {
     private JLabel labelErro;
 
     private static final Color VERMELHO = new Color(0x95, 0x0E, 0x17);
-    private static final Color FUNDO    = new Color(0xFF, 0xF5, 0xF5);
+    private static final Color FUNDO = new Color(0xFF, 0xF5, 0xF5);
 
     public TelaLogin(MainFrame mainFrame, LoginController loginController) {
         this.mainFrame = mainFrame;

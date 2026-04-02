@@ -26,9 +26,9 @@ public class TelaResultados extends JPanel {
     private JTable tabelaPendentes;
     private JTable tabelaFinalizadas;
 
-    private static final Color VERMELHO     = new Color(0x95, 0x0E, 0x17);
+    private static final Color VERMELHO = new Color(0x95, 0x0E, 0x17);
     private static final Color VERMELHO_ESC = new Color(0x70, 0x0A, 0x11);
-    private static final Color FUNDO        = new Color(0xFF, 0xF5, 0xF5);
+    private static final Color FUNDO = new Color(0xFF, 0xF5, 0xF5);
 
     public TelaResultados(MainFrame mainFrame, PartidaController partidaController, CampeonatoController campeonatoController, ApostaController apostaController) {
         this.mainFrame = mainFrame;
@@ -42,7 +42,6 @@ public class TelaResultados extends JPanel {
         setLayout(new BorderLayout());
         setBackground(FUNDO);
 
-        // lateral
         JPanel lateral = new JPanel();
         lateral.setLayout(new BoxLayout(lateral, BoxLayout.Y_AXIS));
         lateral.setBackground(VERMELHO);
@@ -95,7 +94,6 @@ public class TelaResultados extends JPanel {
 
         add(lateral, BorderLayout.WEST);
 
-        // conteudo direita
         JPanel direita = new JPanel(new BorderLayout());
         direita.setBackground(FUNDO);
         direita.setBorder(new EmptyBorder(30, 30, 30, 30));
@@ -118,7 +116,6 @@ public class TelaResultados extends JPanel {
         painelConteudo = new JPanel(cardLayout);
         painelConteudo.setBackground(FUNDO);
 
-        // tabela pendentes
         String[] colunasPendentes = {"Mandante", "Visitante", "Data", "Hora"};
         modeloPendentes = new javax.swing.table.DefaultTableModel(colunasPendentes, 0) {
             public boolean isCellEditable(int r, int c) { return false; }
@@ -144,7 +141,6 @@ public class TelaResultados extends JPanel {
         scrollPendentes.getViewport().setBackground(FUNDO);
         painelConteudo.add(scrollPendentes, "pendentes");
 
-        // tabela finalizadas
         String[] colunasFinalizadas = {"Mandante", "Visitante", "Placar", "Resultado"};
         modeloFinalizadas = new javax.swing.table.DefaultTableModel(colunasFinalizadas, 0) {
             public boolean isCellEditable(int r, int c) { return false; }
