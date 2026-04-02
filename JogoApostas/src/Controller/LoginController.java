@@ -43,7 +43,7 @@ public class LoginController {
 
         participante.setNome(nome.trim());
         participante.setId(proximo++);
-        participante.setEmail(participanteUsuario);
+        participante.setUsuario(participanteUsuario);
         participantes.add(participante);
         return true;
     }

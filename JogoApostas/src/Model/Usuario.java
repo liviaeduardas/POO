@@ -3,14 +3,14 @@ package Model;
 public abstract class Usuario {
     private int id;
     private String nome;
-    private String email;
+    private String usuario;
     private String senha;
 
     public Usuario(){}
-    public Usuario(int id, String senha, String email, String nome) {
+    public Usuario(int id, String senha, String usuario, String nome) {
         this.id = id;
         this.senha = senha;
-        this.email = email;
+        this.usuario = usuario;
         this.nome = nome;
     }
 
@@ -30,11 +30,11 @@ public abstract class Usuario {
         this.nome = nome;
     }
 
-    public String getEmail() {
-        return email;
+    public String getUsuario() {
+        return usuario;
     }
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
     public String getSenha() {
