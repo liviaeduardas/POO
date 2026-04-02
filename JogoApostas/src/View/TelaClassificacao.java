@@ -1,5 +1,4 @@
 package View;
-
 import Controller.GrupoController;
 import Model.Grupo;
 import Model.Participante;

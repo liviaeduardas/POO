@@ -5,7 +5,7 @@ import java.util.List;
 public class Campeonato {
     private static final int MAX_CLUBES = 8;
     private String nome;
-    private int ano;
+    private String categoria;
     private List<Clube> clubes;
     private List<Partida> partidas;
 
@@ -16,7 +16,7 @@ public class Campeonato {
 
     public Campeonato(String nome, int ano) {
         this.nome = nome;
-        this.ano = ano;
+        this.categoria = categoria;
         this.clubes = new ArrayList<>();
         this.partidas = new ArrayList<>();
     }
@@ -67,12 +67,12 @@ public class Campeonato {
         this.nome = nome;
     }
 
-    public int getAno() {
-        return ano;
+    public String getCategoria() {
+        return categoria;
     }
 
-    public void setAno(int ano) {
-        this.ano = ano;
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 
     public List<Clube> getClubes() {

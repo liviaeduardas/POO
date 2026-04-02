@@ -181,7 +181,7 @@ public class TelaCadastro extends JPanel {
         painel.add(campoCampeonatoNome, gbc);
 
         gbc.gridx = 0; gbc.gridy = 1; gbc.insets = new Insets(10, 0, 2, 16);
-        painel.add(new JLabel("Ano:"), gbc);
+        painel.add(new JLabel("Categoria:"), gbc);
         campoCampeonatoAno = new JTextField();
         campoCampeonatoAno.setPreferredSize(new Dimension(260, 34));
         gbc.gridx = 1; gbc.insets = new Insets(10, 0, 2, 0);
