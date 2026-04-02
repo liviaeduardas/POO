@@ -1,5 +1,4 @@
 package View;
-
 import Controller.ApostaController;
 import Controller.CampeonatoController;
 import Controller.PartidaController;
@@ -7,6 +6,7 @@ import Model.Campeonato;
 import Model.Partida;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.List;
 
@@ -18,15 +18,17 @@ public class TelaResultados extends JPanel {
     private ApostaController apostaController;
 
     private JComboBox<String> comboCampeonato;
-    private JTabbedPane abas;
+    private JPanel painelConteudo;
+    private CardLayout cardLayout;
 
     private javax.swing.table.DefaultTableModel modeloPendentes;
     private javax.swing.table.DefaultTableModel modeloFinalizadas;
     private JTable tabelaPendentes;
     private JTable tabelaFinalizadas;
 
-    private JButton botaoAtualizar;
-    private JButton botaoVoltar;
+    private static final Color VERMELHO     = new Color(0x95, 0x0E, 0x17);
+    private static final Color VERMELHO_ESC = new Color(0x70, 0x0A, 0x11);
+    private static final Color FUNDO        = new Color(0xFF, 0xF5, 0xF5);
 
     public TelaResultados(MainFrame mainFrame, PartidaController partidaController, CampeonatoController campeonatoController, ApostaController apostaController) {
         this.mainFrame = mainFrame;
@@ -37,69 +39,159 @@ public class TelaResultados extends JPanel {
     }
 
     private void inicializarComponentes() {
-        setLayout(new BorderLayout(10, 10));
-        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        setLayout(new BorderLayout());
+        setBackground(FUNDO);
 
-        JPanel painelTopo = new JPanel(new BorderLayout());
-        JLabel titulo = new JLabel("Resultados das Partidas", SwingConstants.CENTER);
+        // lateral
+        JPanel lateral = new JPanel();
+        lateral.setLayout(new BoxLayout(lateral, BoxLayout.Y_AXIS));
+        lateral.setBackground(VERMELHO);
+        lateral.setPreferredSize(new Dimension(180, 0));
+        lateral.setBorder(new EmptyBorder(30, 0, 20, 0));
+
+        JLabel sistema = new JLabel("Sistema", SwingConstants.CENTER);
+        sistema.setFont(new Font("Arial", Font.BOLD, 18));
+        sistema.setForeground(Color.WHITE);
+        sistema.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lateral.add(sistema);
+
+        JLabel sub = new JLabel("Resultados", SwingConstants.CENTER);
+        sub.setFont(new Font("Arial", Font.PLAIN, 12));
+        sub.setForeground(new Color(0xFF, 0xCC, 0xCC));
+        sub.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lateral.add(sub);
+
+        lateral.add(Box.createVerticalStrut(30));
+
+        JSeparator sep = new JSeparator();
+        sep.setMaximumSize(new Dimension(140, 1));
+        sep.setForeground(new Color(0xAA, 0x33, 0x33));
+        sep.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lateral.add(sep);
+
+        lateral.add(Box.createVerticalStrut(20));
+
+        JButton btnPendentes = criarBotaoMenu("Aguardando");
+        btnPendentes.addActionListener(e -> cardLayout.show(painelConteudo, "pendentes"));
+        lateral.add(btnPendentes);
+        lateral.add(Box.createVerticalStrut(4));
+
+        JButton btnFinalizadas = criarBotaoMenu("Finalizadas");
+        btnFinalizadas.addActionListener(e -> cardLayout.show(painelConteudo, "finalizadas"));
+        lateral.add(btnFinalizadas);
+        lateral.add(Box.createVerticalStrut(4));
+
+        JButton btnAtualizar = criarBotaoMenu("Atualizar");
+        btnAtualizar.addActionListener(e -> atualizar());
+        lateral.add(btnAtualizar);
+
+        lateral.add(Box.createVerticalGlue());
+
+        JButton botaoVoltar = criarBotaoMenu("Voltar");
+        botaoVoltar.setForeground(new Color(0xFF, 0xCC, 0xCC));
+        botaoVoltar.addActionListener(e -> mainFrame.trocarTela("telaApostas"));
+        lateral.add(botaoVoltar);
+        lateral.add(Box.createVerticalStrut(10));
+
+        add(lateral, BorderLayout.WEST);
+
+        // conteudo direita
+        JPanel direita = new JPanel(new BorderLayout());
+        direita.setBackground(FUNDO);
+        direita.setBorder(new EmptyBorder(30, 30, 30, 30));
+
+        JLabel titulo = new JLabel("Resultados das Partidas");
         titulo.setFont(new Font("Arial", Font.BOLD, 20));
-        painelTopo.add(titulo, BorderLayout.NORTH);
+        titulo.setForeground(VERMELHO);
+        direita.add(titulo, BorderLayout.NORTH);
 
-        JPanel painelFiltro = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        painelFiltro.add(new JLabel("Campeonato:"));
-
+        JPanel painelGrupo = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 10));
+        painelGrupo.setBackground(FUNDO);
+        painelGrupo.add(new JLabel("Campeonato: "));
         comboCampeonato = new JComboBox<>();
-        comboCampeonato.setPreferredSize(new Dimension(200, 30));
+        comboCampeonato.setFont(new Font("Arial", Font.PLAIN, 13));
+        comboCampeonato.setPreferredSize(new Dimension(200, 32));
         comboCampeonato.addActionListener(e -> atualizarTabelas());
-        painelFiltro.add(comboCampeonato);
+        painelGrupo.add(comboCampeonato);
 
-        botaoAtualizar = new JButton("Atualizar");
-        botaoAtualizar.addActionListener(e -> atualizar());
-        painelFiltro.add(botaoAtualizar);
+        cardLayout = new CardLayout();
+        painelConteudo = new JPanel(cardLayout);
+        painelConteudo.setBackground(FUNDO);
 
-        painelTopo.add(painelFiltro, BorderLayout.SOUTH);
-        add(painelTopo, BorderLayout.NORTH);
-
-        abas = new JTabbedPane();
-
+        // tabela pendentes
         String[] colunasPendentes = {"Mandante", "Visitante", "Data", "Hora"};
         modeloPendentes = new javax.swing.table.DefaultTableModel(colunasPendentes, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
+            public boolean isCellEditable(int r, int c) { return false; }
         };
         tabelaPendentes = new JTable(modeloPendentes);
         tabelaPendentes.setFont(new Font("Arial", Font.PLAIN, 13));
         tabelaPendentes.setRowHeight(28);
+        tabelaPendentes.setForeground(Color.BLACK);
+        tabelaPendentes.setBackground(FUNDO);
         tabelaPendentes.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
-        centralizarColunas(tabelaPendentes, colunasPendentes.length);
-        abas.addTab("Aguardando resultado", new JScrollPane(tabelaPendentes));
+        tabelaPendentes.getTableHeader().setBackground(VERMELHO);
+        tabelaPendentes.getTableHeader().setForeground(VERMELHO_ESC);
+        tabelaPendentes.setGridColor(new Color(0xEE, 0xEE, 0xEE));
 
+        javax.swing.table.DefaultTableCellRenderer centroPendentes = new javax.swing.table.DefaultTableCellRenderer();
+        centroPendentes.setHorizontalAlignment(SwingConstants.CENTER);
+        centroPendentes.setForeground(Color.BLACK);
+        centroPendentes.setBackground(FUNDO);
+        for (int i = 0; i < colunasPendentes.length; i++) {
+            tabelaPendentes.getColumnModel().getColumn(i).setCellRenderer(centroPendentes);
+        }
+        JScrollPane scrollPendentes = new JScrollPane(tabelaPendentes);
+        scrollPendentes.getViewport().setBackground(FUNDO);
+        painelConteudo.add(scrollPendentes, "pendentes");
+
+        // tabela finalizadas
         String[] colunasFinalizadas = {"Mandante", "Visitante", "Placar", "Resultado"};
         modeloFinalizadas = new javax.swing.table.DefaultTableModel(colunasFinalizadas, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
+            public boolean isCellEditable(int r, int c) { return false; }
         };
         tabelaFinalizadas = new JTable(modeloFinalizadas);
         tabelaFinalizadas.setFont(new Font("Arial", Font.PLAIN, 13));
         tabelaFinalizadas.setRowHeight(28);
+        tabelaFinalizadas.setForeground(Color.BLACK);
+        tabelaFinalizadas.setBackground(FUNDO);
         tabelaFinalizadas.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
-        centralizarColunas(tabelaFinalizadas, colunasFinalizadas.length);
-        abas.addTab("Finalizadas", new JScrollPane(tabelaFinalizadas));
+        tabelaFinalizadas.getTableHeader().setBackground(VERMELHO);
+        tabelaFinalizadas.getTableHeader().setForeground(VERMELHO_ESC);
+        tabelaFinalizadas.setGridColor(new Color(0xEE, 0xEE, 0xEE));
 
-        add(abas, BorderLayout.CENTER);
+        javax.swing.table.DefaultTableCellRenderer centroFinalizadas = new javax.swing.table.DefaultTableCellRenderer();
+        centroFinalizadas.setHorizontalAlignment(SwingConstants.CENTER);
+        centroFinalizadas.setForeground(Color.BLACK);
+        centroFinalizadas.setBackground(FUNDO);
+        for (int i = 0; i < colunasFinalizadas.length; i++) {
+            tabelaFinalizadas.getColumnModel().getColumn(i).setCellRenderer(centroFinalizadas);
+        }
+        JScrollPane scrollFinalizadas = new JScrollPane(tabelaFinalizadas);
+        scrollFinalizadas.getViewport().setBackground(FUNDO);
+        painelConteudo.add(scrollFinalizadas, "finalizadas");
 
+        JPanel painelCentro = new JPanel(new BorderLayout(0, 10));
+        painelCentro.setBackground(FUNDO);
+        painelCentro.add(painelGrupo, BorderLayout.NORTH);
+        painelCentro.add(painelConteudo, BorderLayout.CENTER);
 
-        JPanel painelRodape = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
-        botaoVoltar = new JButton("Voltar");
-        botaoVoltar.setFont(new Font("Arial", Font.BOLD, 13));
-        botaoVoltar.addActionListener(e -> mainFrame.trocarTela("telaApostas"));
-        painelRodape.add(botaoVoltar);
+        direita.add(painelCentro, BorderLayout.CENTER);
+        add(direita, BorderLayout.CENTER);
+    }
 
-        add(painelRodape, BorderLayout.SOUTH);
+    private JButton criarBotaoMenu(String texto) {
+        JButton botao = new JButton(texto);
+        botao.setFont(new Font("Arial", Font.PLAIN, 13));
+        botao.setForeground(Color.WHITE);
+        botao.setBackground(VERMELHO);
+        botao.setMaximumSize(new Dimension(180, 36));
+        botao.setPreferredSize(new Dimension(180, 36));
+        botao.setAlignmentX(Component.CENTER_ALIGNMENT);
+        botao.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent e) { botao.setBackground(VERMELHO_ESC); }
+            public void mouseExited(java.awt.event.MouseEvent e)  { botao.setBackground(VERMELHO); }
+        });
+        return botao;
     }
 
     private void atualizarTabelas() {
@@ -131,15 +223,6 @@ public class TelaResultados extends JPanel {
                     placar,
                     p.getResultado()
             });
-        }
-    }
-
-    private void centralizarColunas(JTable tabela, int totalColunas) {
-        javax.swing.table.DefaultTableCellRenderer centralizador =
-                new javax.swing.table.DefaultTableCellRenderer();
-        centralizador.setHorizontalAlignment(SwingConstants.CENTER);
-        for (int i = 0; i < totalColunas; i++) {
-            tabela.getColumnModel().getColumn(i).setCellRenderer(centralizador);
         }
     }
 

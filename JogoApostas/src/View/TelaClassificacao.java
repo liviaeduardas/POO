@@ -33,7 +33,6 @@ public class TelaClassificacao extends JPanel {
         setLayout(new BorderLayout());
         setBackground(FUNDO);
 
-        // ===== LATERAL ESQUERDA =====
         JPanel lateral = new JPanel();
         lateral.setLayout(new BoxLayout(lateral, BoxLayout.Y_AXIS));
         lateral.setBackground(VERMELHO);
@@ -77,7 +76,6 @@ public class TelaClassificacao extends JPanel {
 
         add(lateral, BorderLayout.WEST);
 
-        // ===== CONTEÚDO DIREITA =====
         JPanel direita = new JPanel(new BorderLayout(0, 16));
         direita.setBackground(FUNDO);
         direita.setBorder(new EmptyBorder(30, 30, 30, 30));
@@ -87,7 +85,6 @@ public class TelaClassificacao extends JPanel {
         titulo.setForeground(VERMELHO);
         direita.add(titulo, BorderLayout.NORTH);
 
-        // seletor de grupo
         JPanel painelGrupo = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         painelGrupo.setBackground(FUNDO);
         painelGrupo.add(new JLabel("Grupo: "));
@@ -97,7 +94,6 @@ public class TelaClassificacao extends JPanel {
         comboGrupos.addActionListener(e -> atualizarRanking());
         painelGrupo.add(comboGrupos);
 
-        // tabela
         String[] colunas = {"Posição", "Participante", "Pontos"};
         modeloTabela = new javax.swing.table.DefaultTableModel(colunas, 0) {
             public boolean isCellEditable(int r, int c) { return false; }
@@ -106,29 +102,36 @@ public class TelaClassificacao extends JPanel {
         tabelaRanking = new JTable(modeloTabela);
         tabelaRanking.setFont(new Font("Arial", Font.PLAIN, 14));
         tabelaRanking.setRowHeight(32);
+        tabelaRanking.setForeground(Color.BLACK);
+        tabelaRanking.setBackground(FUNDO);
         tabelaRanking.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
         tabelaRanking.getTableHeader().setBackground(VERMELHO);
-        tabelaRanking.getTableHeader().setForeground(Color.WHITE);
+        tabelaRanking.getTableHeader().setForeground(VERMELHO_ESC);
         tabelaRanking.setSelectionBackground(new Color(0xFF, 0xDD, 0xDD));
         tabelaRanking.setGridColor(new Color(0xEE, 0xEE, 0xEE));
 
         javax.swing.table.DefaultTableCellRenderer centro = new javax.swing.table.DefaultTableCellRenderer();
         centro.setHorizontalAlignment(SwingConstants.CENTER);
+        centro.setForeground(Color.BLACK);
+        centro.setBackground(FUNDO);
         for (int i = 0; i < colunas.length; i++) {
             tabelaRanking.getColumnModel().getColumn(i).setCellRenderer(centro);
         }
 
-        JPanel centro2 = new JPanel(new BorderLayout(0, 10));
-        centro2.setBackground(FUNDO);
-        centro2.add(painelGrupo, BorderLayout.NORTH);
-        centro2.add(new JScrollPane(tabelaRanking), BorderLayout.CENTER);
+        JScrollPane scroll = new JScrollPane(tabelaRanking);
+        scroll.getViewport().setBackground(FUNDO);
+
+        JPanel painelCentro = new JPanel(new BorderLayout(0, 10));
+        painelCentro.setBackground(FUNDO);
+        painelCentro.add(painelGrupo, BorderLayout.NORTH);
+        painelCentro.add(scroll, BorderLayout.CENTER);
 
         labelInfo = new JLabel(" ");
         labelInfo.setFont(new Font("Arial", Font.ITALIC, 12));
-        labelInfo.setForeground(new Color(0x77, 0x77, 0x77));
-        centro2.add(labelInfo, BorderLayout.SOUTH);
+        labelInfo.setForeground(VERMELHO);
+        painelCentro.add(labelInfo, BorderLayout.SOUTH);
 
-        direita.add(centro2, BorderLayout.CENTER);
+        direita.add(painelCentro, BorderLayout.CENTER);
         add(direita, BorderLayout.CENTER);
     }
 
@@ -137,9 +140,6 @@ public class TelaClassificacao extends JPanel {
         botao.setFont(new Font("Arial", Font.PLAIN, 13));
         botao.setForeground(Color.WHITE);
         botao.setBackground(VERMELHO);
-        botao.setBorderPainted(false);
-        botao.setFocusPainted(false);
-        botao.setCursor(new Cursor(Cursor.HAND_CURSOR));
         botao.setMaximumSize(new Dimension(180, 36));
         botao.setPreferredSize(new Dimension(180, 36));
         botao.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -159,10 +159,6 @@ public class TelaClassificacao extends JPanel {
         if (grupo == null) return;
 
         ArrayList<Participante> ranking = grupoController.getRanking(grupo);
-        if (ranking.isEmpty()) {
-            labelInfo.setText("Nenhum participante no grupo");
-            return;
-        }
 
         for (int i = 0; i < ranking.size(); i++) {
             Participante p = ranking.get(i);

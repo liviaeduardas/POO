@@ -1,5 +1,4 @@
 package View;
-
 import Controller.CampeonatoController;
 import Controller.PartidaController;
 import Model.Campeonato;
@@ -13,36 +12,29 @@ import java.time.LocalTime;
 import java.util.List;
 
 public class TelaCadastro extends JPanel {
-
     private MainFrame mainFrame;
     private CampeonatoController campeonatoController;
     private PartidaController partidaController;
-
-    private JTabbedPane abas;
+    private JPanel painelConteudo;
+    private CardLayout cardLayout;
 
     private JTextField campoCampeonatoNome;
     private JTextField campoCampeonatoAno;
-    private JButton botaoCriarCampeonato;
 
     private JTextField campoClubeNome;
     private JTextField campoClubeSigla;
     private JComboBox<String> comboCampeonatoClube;
-    private JButton botaoCadastrarClube;
 
     private JComboBox<String> comboCampeonatoPartida;
     private JComboBox<String> comboMandante;
     private JComboBox<String> comboVisitante;
     private JTextField campoData;
     private JTextField campoHora;
-    private JButton botaoCadastrarPartida;
 
     private JComboBox<String> comboCampeonatoResultado;
     private JComboBox<String> comboPartidaResultado;
     private JTextField campoGolsMandante;
     private JTextField campoGolsVisitante;
-    private JButton botaoRegistrarResultado;
-
-    private JButton botaoSair;
 
     private static final Color VERMELHO     = new Color(0x95, 0x0E, 0x17);
     private static final Color VERMELHO_ESC = new Color(0x70, 0x0A, 0x11);
@@ -59,7 +51,6 @@ public class TelaCadastro extends JPanel {
         setLayout(new BorderLayout());
         setBackground(FUNDO);
 
-        // ===== LATERAL ESQUERDA =====
         JPanel lateral = new JPanel();
         lateral.setLayout(new BoxLayout(lateral, BoxLayout.Y_AXIS));
         lateral.setBackground(VERMELHO);
@@ -88,18 +79,38 @@ public class TelaCadastro extends JPanel {
 
         lateral.add(Box.createVerticalStrut(20));
 
-        String[] secoes = {"Campeonato", "Clube", "Partida", "Resultado"};
-        for (int i = 0; i < secoes.length; i++) {
-            final int index = i;
-            JButton btnMenu = criarBotaoMenu(secoes[i]);
-            btnMenu.addActionListener(e -> abas.setSelectedIndex(index));
-            lateral.add(btnMenu);
-            lateral.add(Box.createVerticalStrut(4));
-        }
+        JButton btnCampeonato = criarBotaoMenu("Campeonato");
+        btnCampeonato.addActionListener(e -> cardLayout.show(painelConteudo, "campeonato"));
+        lateral.add(btnCampeonato);
+        lateral.add(Box.createVerticalStrut(4));
+
+        JButton btnClube = criarBotaoMenu("Clube");
+        btnClube.addActionListener(e -> {
+            atualizarComboCampeonatos(comboCampeonatoClube);
+            cardLayout.show(painelConteudo, "clube");
+        });
+        lateral.add(btnClube);
+        lateral.add(Box.createVerticalStrut(4));
+
+        JButton btnPartida = criarBotaoMenu("Partida");
+        btnPartida.addActionListener(e -> {
+            atualizarComboCampeonatos(comboCampeonatoPartida);
+            cardLayout.show(painelConteudo, "partida");
+        });
+        lateral.add(btnPartida);
+        lateral.add(Box.createVerticalStrut(4));
+
+        JButton btnResultado = criarBotaoMenu("Resultado");
+        btnResultado.addActionListener(e -> {
+            atualizarComboCampeonatos(comboCampeonatoResultado);
+            cardLayout.show(painelConteudo, "resultado");
+        });
+        lateral.add(btnResultado);
+        lateral.add(Box.createVerticalStrut(4));
 
         lateral.add(Box.createVerticalGlue());
 
-        botaoSair = criarBotaoMenu("Sair");
+        JButton botaoSair = criarBotaoMenu("Sair");
         botaoSair.setForeground(new Color(0xFF, 0xCC, 0xCC));
         botaoSair.addActionListener(e -> mainFrame.trocarTela("telaLogin"));
         lateral.add(botaoSair);
@@ -107,7 +118,6 @@ public class TelaCadastro extends JPanel {
 
         add(lateral, BorderLayout.WEST);
 
-        // ===== CONTEÚDO DIREITA =====
         JPanel direita = new JPanel(new BorderLayout());
         direita.setBackground(FUNDO);
 
@@ -117,17 +127,17 @@ public class TelaCadastro extends JPanel {
         titulo.setBorder(new EmptyBorder(24, 30, 16, 20));
         direita.add(titulo, BorderLayout.NORTH);
 
-        abas = new JTabbedPane();
-        abas.setBackground(FUNDO);
-        abas.setFont(new Font("Arial", Font.PLAIN, 13));
-        abas.setBorder(new EmptyBorder(0, 20, 20, 20));
+        cardLayout = new CardLayout();
+        painelConteudo = new JPanel(cardLayout);
+        painelConteudo.setBackground(FUNDO);
+        painelConteudo.setBorder(new EmptyBorder(0, 20, 20, 20));
 
-        abas.addTab("Campeonato", criarAbaCampeonato());
-        abas.addTab("Clube",      criarAbaClube());
-        abas.addTab("Partida",    criarAbaPartida());
-        abas.addTab("Resultado",  criarAbaResultado());
+        painelConteudo.add(criarPainelCampeonato(), "campeonato");
+        painelConteudo.add(criarPainelClube(),      "clube");
+        painelConteudo.add(criarPainelPartida(),    "partida");
+        painelConteudo.add(criarPainelResultado(),  "resultado");
 
-        direita.add(abas, BorderLayout.CENTER);
+        direita.add(painelConteudo, BorderLayout.CENTER);
         add(direita, BorderLayout.CENTER);
     }
 
@@ -136,19 +146,12 @@ public class TelaCadastro extends JPanel {
         botao.setFont(new Font("Arial", Font.PLAIN, 13));
         botao.setForeground(Color.WHITE);
         botao.setBackground(VERMELHO);
-        botao.setBorderPainted(false);
-        botao.setFocusPainted(false);
-        botao.setCursor(new Cursor(Cursor.HAND_CURSOR));
         botao.setMaximumSize(new Dimension(180, 36));
         botao.setPreferredSize(new Dimension(180, 36));
         botao.setAlignmentX(Component.CENTER_ALIGNMENT);
         botao.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent e) {
-                botao.setBackground(VERMELHO_ESC);
-            }
-            public void mouseExited(java.awt.event.MouseEvent e) {
-                botao.setBackground(VERMELHO);
-            }
+            public void mouseEntered(java.awt.event.MouseEvent e) { botao.setBackground(VERMELHO_ESC); }
+            public void mouseExited(java.awt.event.MouseEvent e)  { botao.setBackground(VERMELHO); }
         });
         return botao;
     }
@@ -158,172 +161,176 @@ public class TelaCadastro extends JPanel {
         botao.setFont(new Font("Arial", Font.BOLD, 13));
         botao.setBackground(VERMELHO);
         botao.setForeground(Color.WHITE);
-        botao.setFocusPainted(false);
-        botao.setBorderPainted(false);
-        botao.setCursor(new Cursor(Cursor.HAND_CURSOR));
         botao.setPreferredSize(new Dimension(200, 36));
         return botao;
     }
 
-    private JPanel criarAba() {
+    private JPanel criarPainelCampeonato() {
         JPanel painel = new JPanel(new GridBagLayout());
         painel.setBackground(FUNDO);
         painel.setBorder(new EmptyBorder(20, 20, 20, 20));
-        return painel;
-    }
-
-    private void adicionarLabel(JPanel painel, GridBagConstraints gbc, String texto, int linha) {
-        JLabel label = new JLabel(texto);
-        label.setFont(new Font("Arial", Font.PLAIN, 13));
-        label.setForeground(new Color(0x44, 0x44, 0x44));
-        gbc.gridx = 0; gbc.gridy = linha;
-        gbc.anchor = GridBagConstraints.WEST;
+        GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 0, 2, 16);
-        painel.add(label, gbc);
-    }
-
-    private JTextField adicionarCampo(JPanel painel, GridBagConstraints gbc, int linha) {
-        JTextField campo = new JTextField();
-        campo.setFont(new Font("Arial", Font.PLAIN, 13));
-        campo.setPreferredSize(new Dimension(260, 34));
-        gbc.gridx = 1; gbc.gridy = linha;
-        gbc.insets = new Insets(10, 0, 2, 0);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        painel.add(campo, gbc);
-        return campo;
-    }
-
-    private JComboBox<String> adicionarCombo(JPanel painel, GridBagConstraints gbc, int linha) {
-        JComboBox<String> combo = new JComboBox<>();
-        combo.setFont(new Font("Arial", Font.PLAIN, 13));
-        combo.setPreferredSize(new Dimension(260, 34));
-        gbc.gridx = 1; gbc.gridy = linha;
-        gbc.insets = new Insets(10, 0, 2, 0);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        painel.add(combo, gbc);
-        return combo;
-    }
-
-    private JPanel criarAbaCampeonato() {
-        JPanel painel = criarAba();
-        GridBagConstraints gbc = new GridBagConstraints();
-
-        adicionarLabel(painel, gbc, "Nome do campeonato:", 0);
-        campoCampeonatoNome = adicionarCampo(painel, gbc, 0);
-
-        adicionarLabel(painel, gbc, "Ano:", 1);
-        campoCampeonatoAno = adicionarCampo(painel, gbc, 1);
-
-        botaoCriarCampeonato = criarBotaoAcao("Criar Campeonato");
-        gbc.gridx = 1; gbc.gridy = 2;
-        gbc.insets = new Insets(20, 0, 0, 0);
-        gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.WEST;
-        painel.add(botaoCriarCampeonato, gbc);
-        botaoCriarCampeonato.addActionListener(e -> criarCampeonato());
+
+        gbc.gridx = 0; gbc.gridy = 0;
+        painel.add(new JLabel("Nome do campeonato:"), gbc);
+        campoCampeonatoNome = new JTextField();
+        campoCampeonatoNome.setPreferredSize(new Dimension(260, 34));
+        gbc.gridx = 1; gbc.insets = new Insets(10, 0, 2, 0);
+        painel.add(campoCampeonatoNome, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 1; gbc.insets = new Insets(10, 0, 2, 16);
+        painel.add(new JLabel("Ano:"), gbc);
+        campoCampeonatoAno = new JTextField();
+        campoCampeonatoAno.setPreferredSize(new Dimension(260, 34));
+        gbc.gridx = 1; gbc.insets = new Insets(10, 0, 2, 0);
+        painel.add(campoCampeonatoAno, gbc);
+
+        JButton botao = criarBotaoAcao("Criar Campeonato");
+        botao.addActionListener(e -> criarCampeonato());
+        gbc.gridx = 1; gbc.gridy = 2; gbc.insets = new Insets(20, 0, 0, 0);
+        painel.add(botao, gbc);
 
         return painel;
     }
 
-    private JPanel criarAbaClube() {
-        JPanel painel = criarAba();
+    private JPanel criarPainelClube() {
+        JPanel painel = new JPanel(new GridBagLayout());
+        painel.setBackground(FUNDO);
+        painel.setBorder(new EmptyBorder(20, 20, 20, 20));
         GridBagConstraints gbc = new GridBagConstraints();
-
-        adicionarLabel(painel, gbc, "Nome do clube:", 0);
-        campoClubeNome = adicionarCampo(painel, gbc, 0);
-
-        adicionarLabel(painel, gbc, "Sigla:", 1);
-        campoClubeSigla = adicionarCampo(painel, gbc, 1);
-
-        adicionarLabel(painel, gbc, "Campeonato:", 2);
-        comboCampeonatoClube = adicionarCombo(painel, gbc, 2);
-
-        botaoCadastrarClube = criarBotaoAcao("Cadastrar Clube");
-        gbc.gridx = 1; gbc.gridy = 3;
-        gbc.insets = new Insets(20, 0, 0, 0);
-        gbc.fill = GridBagConstraints.NONE;
+        gbc.insets = new Insets(10, 0, 2, 16);
         gbc.anchor = GridBagConstraints.WEST;
-        painel.add(botaoCadastrarClube, gbc);
-        botaoCadastrarClube.addActionListener(e -> cadastrarClube());
 
-        abas.addChangeListener(e -> {
-            if (abas.getSelectedIndex() == 1) atualizarComboCampeonatos(comboCampeonatoClube);
-        });
+        gbc.gridx = 0; gbc.gridy = 0;
+        painel.add(new JLabel("Nome do clube:"), gbc);
+        campoClubeNome = new JTextField();
+        campoClubeNome.setPreferredSize(new Dimension(260, 34));
+        gbc.gridx = 1; gbc.insets = new Insets(10, 0, 2, 0);
+        painel.add(campoClubeNome, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 1; gbc.insets = new Insets(10, 0, 2, 16);
+        painel.add(new JLabel("Sigla:"), gbc);
+        campoClubeSigla = new JTextField();
+        campoClubeSigla.setPreferredSize(new Dimension(260, 34));
+        gbc.gridx = 1; gbc.insets = new Insets(10, 0, 2, 0);
+        painel.add(campoClubeSigla, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 2; gbc.insets = new Insets(10, 0, 2, 16);
+        painel.add(new JLabel("Campeonato:"), gbc);
+        comboCampeonatoClube = new JComboBox<>();
+        comboCampeonatoClube.setPreferredSize(new Dimension(260, 34));
+        gbc.gridx = 1; gbc.insets = new Insets(10, 0, 2, 0);
+        painel.add(comboCampeonatoClube, gbc);
+
+        JButton botao = criarBotaoAcao("Cadastrar Clube");
+        botao.addActionListener(e -> cadastrarClube());
+        gbc.gridx = 1; gbc.gridy = 3; gbc.insets = new Insets(20, 0, 0, 0);
+        painel.add(botao, gbc);
 
         return painel;
     }
 
-    private JPanel criarAbaPartida() {
-        JPanel painel = criarAba();
+    private JPanel criarPainelPartida() {
+        JPanel painel = new JPanel(new GridBagLayout());
+        painel.setBackground(FUNDO);
+        painel.setBorder(new EmptyBorder(20, 20, 20, 20));
         GridBagConstraints gbc = new GridBagConstraints();
-
-        adicionarLabel(painel, gbc, "Campeonato:", 0);
-        comboCampeonatoPartida = adicionarCombo(painel, gbc, 0);
-
-        adicionarLabel(painel, gbc, "Mandante:", 1);
-        comboMandante = adicionarCombo(painel, gbc, 1);
-
-        adicionarLabel(painel, gbc, "Visitante:", 2);
-        comboVisitante = adicionarCombo(painel, gbc, 2);
-
-        adicionarLabel(painel, gbc, "Data (dd/MM/yyyy):", 3);
-        campoData = adicionarCampo(painel, gbc, 3);
-
-        adicionarLabel(painel, gbc, "Hora (HH:mm):", 4);
-        campoHora = adicionarCampo(painel, gbc, 4);
-
-        botaoCadastrarPartida = criarBotaoAcao("Cadastrar Partida");
-        gbc.gridx = 1; gbc.gridy = 5;
-        gbc.insets = new Insets(20, 0, 0, 0);
-        gbc.fill = GridBagConstraints.NONE;
+        gbc.insets = new Insets(10, 0, 2, 16);
         gbc.anchor = GridBagConstraints.WEST;
-        painel.add(botaoCadastrarPartida, gbc);
-        botaoCadastrarPartida.addActionListener(e -> cadastrarPartida());
 
+        gbc.gridx = 0; gbc.gridy = 0;
+        painel.add(new JLabel("Campeonato:"), gbc);
+        comboCampeonatoPartida = new JComboBox<>();
+        comboCampeonatoPartida.setPreferredSize(new Dimension(260, 34));
         comboCampeonatoPartida.addActionListener(e -> atualizarClubesPartida());
-        abas.addChangeListener(e -> {
-            if (abas.getSelectedIndex() == 2) atualizarComboCampeonatos(comboCampeonatoPartida);
-        });
+        gbc.gridx = 1; gbc.insets = new Insets(10, 0, 2, 0);
+        painel.add(comboCampeonatoPartida, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 1; gbc.insets = new Insets(10, 0, 2, 16);
+        painel.add(new JLabel("Mandante:"), gbc);
+        comboMandante = new JComboBox<>();
+        comboMandante.setPreferredSize(new Dimension(260, 34));
+        gbc.gridx = 1; gbc.insets = new Insets(10, 0, 2, 0);
+        painel.add(comboMandante, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 2; gbc.insets = new Insets(10, 0, 2, 16);
+        painel.add(new JLabel("Visitante:"), gbc);
+        comboVisitante = new JComboBox<>();
+        comboVisitante.setPreferredSize(new Dimension(260, 34));
+        gbc.gridx = 1; gbc.insets = new Insets(10, 0, 2, 0);
+        painel.add(comboVisitante, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 3; gbc.insets = new Insets(10, 0, 2, 16);
+        painel.add(new JLabel("Data (dd/MM/yyyy):"), gbc);
+        campoData = new JTextField();
+        campoData.setPreferredSize(new Dimension(260, 34));
+        gbc.gridx = 1; gbc.insets = new Insets(10, 0, 2, 0);
+        painel.add(campoData, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 4; gbc.insets = new Insets(10, 0, 2, 16);
+        painel.add(new JLabel("Hora (HH:mm):"), gbc);
+        campoHora = new JTextField();
+        campoHora.setPreferredSize(new Dimension(260, 34));
+        gbc.gridx = 1; gbc.insets = new Insets(10, 0, 2, 0);
+        painel.add(campoHora, gbc);
+
+        JButton botao = criarBotaoAcao("Cadastrar Partida");
+        botao.addActionListener(e -> cadastrarPartida());
+        gbc.gridx = 1; gbc.gridy = 5; gbc.insets = new Insets(20, 0, 0, 0);
+        painel.add(botao, gbc);
 
         return painel;
     }
 
-    private JPanel criarAbaResultado() {
-        JPanel painel = criarAba();
+    private JPanel criarPainelResultado() {
+        JPanel painel = new JPanel(new GridBagLayout());
+        painel.setBackground(FUNDO);
+        painel.setBorder(new EmptyBorder(20, 20, 20, 20));
         GridBagConstraints gbc = new GridBagConstraints();
-
-        adicionarLabel(painel, gbc, "Campeonato:", 0);
-        comboCampeonatoResultado = adicionarCombo(painel, gbc, 0);
-
-        adicionarLabel(painel, gbc, "Partida:", 1);
-        comboPartidaResultado = adicionarCombo(painel, gbc, 1);
-
-        adicionarLabel(painel, gbc, "Gols mandante:", 2);
-        campoGolsMandante = adicionarCampo(painel, gbc, 2);
-
-        adicionarLabel(painel, gbc, "Gols visitante:", 3);
-        campoGolsVisitante = adicionarCampo(painel, gbc, 3);
-
-        botaoRegistrarResultado = criarBotaoAcao("Registrar Resultado");
-        gbc.gridx = 1; gbc.gridy = 4;
-        gbc.insets = new Insets(20, 0, 0, 0);
-        gbc.fill = GridBagConstraints.NONE;
+        gbc.insets = new Insets(10, 0, 2, 16);
         gbc.anchor = GridBagConstraints.WEST;
-        painel.add(botaoRegistrarResultado, gbc);
-        botaoRegistrarResultado.addActionListener(e -> registrarResultado());
 
+        gbc.gridx = 0; gbc.gridy = 0;
+        painel.add(new JLabel("Campeonato:"), gbc);
+        comboCampeonatoResultado = new JComboBox<>();
+        comboCampeonatoResultado.setPreferredSize(new Dimension(260, 34));
         comboCampeonatoResultado.addActionListener(e -> atualizarPartidasResultado());
-        abas.addChangeListener(e -> {
-            if (abas.getSelectedIndex() == 3) atualizarComboCampeonatos(comboCampeonatoResultado);
-        });
+        gbc.gridx = 1; gbc.insets = new Insets(10, 0, 2, 0);
+        painel.add(comboCampeonatoResultado, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 1; gbc.insets = new Insets(10, 0, 2, 16);
+        painel.add(new JLabel("Partida:"), gbc);
+        comboPartidaResultado = new JComboBox<>();
+        comboPartidaResultado.setPreferredSize(new Dimension(260, 34));
+        gbc.gridx = 1; gbc.insets = new Insets(10, 0, 2, 0);
+        painel.add(comboPartidaResultado, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 2; gbc.insets = new Insets(10, 0, 2, 16);
+        painel.add(new JLabel("Gols mandante:"), gbc);
+        campoGolsMandante = new JTextField();
+        campoGolsMandante.setPreferredSize(new Dimension(260, 34));
+        gbc.gridx = 1; gbc.insets = new Insets(10, 0, 2, 0);
+        painel.add(campoGolsMandante, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 3; gbc.insets = new Insets(10, 0, 2, 16);
+        painel.add(new JLabel("Gols visitante:"), gbc);
+        campoGolsVisitante = new JTextField();
+        campoGolsVisitante.setPreferredSize(new Dimension(260, 34));
+        gbc.gridx = 1; gbc.insets = new Insets(10, 0, 2, 0);
+        painel.add(campoGolsVisitante, gbc);
+
+        JButton botao = criarBotaoAcao("Registrar Resultado");
+        botao.addActionListener(e -> registrarResultado());
+        gbc.gridx = 1; gbc.gridy = 4; gbc.insets = new Insets(20, 0, 0, 0);
+        painel.add(botao, gbc);
 
         return painel;
     }
-
-    // ===== AÇÕES =====
 
     private void criarCampeonato() {
-        String nome   = campoCampeonatoNome.getText().trim();
+        String nome = campoCampeonatoNome.getText().trim();
         String anoStr = campoCampeonatoAno.getText().trim();
         try {
             int ano = Integer.parseInt(anoStr);
@@ -341,19 +348,18 @@ public class TelaCadastro extends JPanel {
     }
 
     private void cadastrarClube() {
-        String nome   = campoClubeNome.getText().trim();
-        String sigla  = campoClubeSigla.getText().trim();
+        String nome = campoClubeNome.getText().trim();
+        String sigla = campoClubeSigla.getText().trim();
         String nomeCampeonato = (String) comboCampeonatoClube.getSelectedItem();
         Campeonato campeonato = campeonatoController.buscarNome(nomeCampeonato);
-        if (campeonato == null) {
-            JOptionPane.showMessageDialog(mainFrame, "Selecione um campeonato!", "Erro", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+        if (campeonato == null) return;
+
         boolean cadastrou = campeonatoController.cadastrarClube(nome, sigla);
         if (!cadastrou) {
             JOptionPane.showMessageDialog(mainFrame, "Erro ao cadastrar clube!", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
+
         Clube clube = campeonatoController.buscarClubeSigla(sigla);
         boolean adicionou = campeonatoController.adicionarClubeCampeonato(campeonato, clube);
         if (adicionou) {
@@ -367,22 +373,26 @@ public class TelaCadastro extends JPanel {
 
     private void cadastrarPartida() {
         String nomeCampeonato = (String) comboCampeonatoPartida.getSelectedItem();
-        String nomeMandante   = (String) comboMandante.getSelectedItem();
-        String nomeVisitante  = (String) comboVisitante.getSelectedItem();
-        String dataStr        = campoData.getText().trim();
-        String horaStr        = campoHora.getText().trim();
-        if (nomeMandante == null || nomeVisitante == null || nomeMandante.equals(nomeVisitante)) {
+        String nomeMandante = (String) comboMandante.getSelectedItem();
+        String nomeVisitante = (String) comboVisitante.getSelectedItem();
+        String dataStr = campoData.getText().trim();
+        String horaStr = campoHora.getText().trim();
+
+        if (nomeMandante.equals(nomeVisitante)) {
             JOptionPane.showMessageDialog(mainFrame, "Selecione times diferentes!", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
+
         try {
             String[] pd = dataStr.split("/");
             LocalDate data = LocalDate.of(Integer.parseInt(pd[2]), Integer.parseInt(pd[1]), Integer.parseInt(pd[0]));
             String[] ph = horaStr.split(":");
             LocalTime hora = LocalTime.of(Integer.parseInt(ph[0]), Integer.parseInt(ph[1]));
+
             Campeonato campeonato = campeonatoController.buscarNome(nomeCampeonato);
-            Clube mandante  = campeonatoController.buscarClubeSigla(nomeMandante);
+            Clube mandante = campeonatoController.buscarClubeSigla(nomeMandante);
             Clube visitante = campeonatoController.buscarClubeSigla(nomeVisitante);
+
             boolean cadastrou = partidaController.cadastrarPartida(campeonato, mandante, visitante, data, hora);
             if (cadastrou) {
                 JOptionPane.showMessageDialog(mainFrame, "Partida cadastrada com sucesso!");
@@ -397,23 +407,27 @@ public class TelaCadastro extends JPanel {
     }
 
     private void registrarResultado() {
-        String nomePartida    = (String) comboPartidaResultado.getSelectedItem();
+        String nomePartida = (String) comboPartidaResultado.getSelectedItem();
         String nomeCampeonato = (String) comboCampeonatoResultado.getSelectedItem();
-        String golsMStr       = campoGolsMandante.getText().trim();
-        String golsVStr       = campoGolsVisitante.getText().trim();
+        String golsMStr = campoGolsMandante.getText().trim();
+        String golsVStr = campoGolsVisitante.getText().trim();
+
         try {
             int golsM = Integer.parseInt(golsMStr);
             int golsV = Integer.parseInt(golsVStr);
+
             Campeonato campeonato = campeonatoController.buscarNome(nomeCampeonato);
             if (campeonato == null) return;
+
             Model.Partida partida = null;
             for (Model.Partida p : campeonato.getPartidas()) {
-                if (p.toString().equals(nomePartida)) { partida = p; break; }
+                if (p.toString().equals(nomePartida)) {
+                    partida = p;
+                    break;
+                }
             }
-            if (partida == null) {
-                JOptionPane.showMessageDialog(mainFrame, "Partida não encontrada!", "Erro", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+            if (partida == null) return;
+
             boolean registrou = partidaController.registrarResultado(partida, golsM, golsV);
             if (registrou) {
                 mainFrame.getApostaController().calcularPontuacoes(campeonato);
@@ -422,18 +436,18 @@ public class TelaCadastro extends JPanel {
                 campoGolsVisitante.setText("");
                 atualizarPartidasResultado();
             } else {
-                JOptionPane.showMessageDialog(mainFrame, "Partida já encerrada!", "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(mainFrame, "Erro ao registrar resultado!", "Erro", JOptionPane.ERROR_MESSAGE);
             }
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(mainFrame, "Gols inválidos!", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    // ===== AUXILIARES =====
-
     private void atualizarComboCampeonatos(JComboBox<String> combo) {
         combo.removeAllItems();
-        for (Campeonato c : campeonatoController.getCampeonatos()) combo.addItem(c.getNome());
+        for (Campeonato c : campeonatoController.getCampeonatos()) {
+            combo.addItem(c.getNome());
+        }
     }
 
     private void atualizarClubesPartida() {
@@ -456,6 +470,8 @@ public class TelaCadastro extends JPanel {
         Campeonato campeonato = campeonatoController.buscarNome(nomeCampeonato);
         if (campeonato == null) return;
         List<Model.Partida> pendentes = partidaController.getPartidasPendentes(campeonato);
-        for (Model.Partida p : pendentes) comboPartidaResultado.addItem(p.toString());
+        for (Model.Partida p : pendentes) {
+            comboPartidaResultado.addItem(p.toString());
+        }
     }
 }
