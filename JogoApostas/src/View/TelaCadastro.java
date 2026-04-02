@@ -19,7 +19,7 @@ public class TelaCadastro extends JPanel {
     private CardLayout cardLayout;
 
     private JTextField campoCampeonatoNome;
-    private JTextField campoCampeonatoAno;
+    private JTextField campoCampeonatoCategoria;
 
     private JTextField campoClubeNome;
     private JTextField campoClubeSigla;
@@ -182,10 +182,10 @@ public class TelaCadastro extends JPanel {
 
         gbc.gridx = 0; gbc.gridy = 1; gbc.insets = new Insets(10, 0, 2, 16);
         painel.add(new JLabel("Categoria:"), gbc);
-        campoCampeonatoAno = new JTextField();
-        campoCampeonatoAno.setPreferredSize(new Dimension(260, 34));
+        campoCampeonatoCategoria = new JTextField();
+        campoCampeonatoCategoria.setPreferredSize(new Dimension(260, 34));
         gbc.gridx = 1; gbc.insets = new Insets(10, 0, 2, 0);
-        painel.add(campoCampeonatoAno, gbc);
+        painel.add(campoCampeonatoCategoria, gbc);
 
         JButton botao = criarBotaoAcao("Criar Campeonato");
         botao.addActionListener(e -> criarCampeonato());
@@ -331,16 +331,14 @@ public class TelaCadastro extends JPanel {
 
     private void criarCampeonato() {
         String nome = campoCampeonatoNome.getText().trim();
-        String anoStr = campoCampeonatoAno.getText().trim();
+        String categoria = campoCampeonatoCategoria.getText().trim();
 
-        int ano = Integer.parseInt(anoStr);
-
-        boolean criou = campeonatoController.criarCampeonato(nome, ano);
+        boolean criou = campeonatoController.criarCampeonato(nome, categoria);
 
         if (criou) {
             JOptionPane.showMessageDialog(mainFrame, "Campeonato criado com sucesso!");
             campoCampeonatoNome.setText("");
-            campoCampeonatoAno.setText("");
+            campoCampeonatoCategoria.setText("");
         } else {
             JOptionPane.showMessageDialog(mainFrame, "Erro ao criar campeonato!", "Erro", JOptionPane.ERROR_MESSAGE);
         }

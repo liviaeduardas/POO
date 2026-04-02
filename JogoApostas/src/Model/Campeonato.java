@@ -14,7 +14,7 @@ public class Campeonato {
         this.partidas = new ArrayList<>();
     }
 
-    public Campeonato(String nome, int ano) {
+    public Campeonato(String nome, String categoria) {
         this.nome = nome;
         this.categoria = categoria;
         this.clubes = new ArrayList<>();
