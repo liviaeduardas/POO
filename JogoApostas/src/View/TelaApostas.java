@@ -338,5 +338,8 @@ public class TelaApostas extends JPanel {
         }
         atualizarPartidas();
         labelInfo.setText(" ");
+
+        campoGolsMandante.setText("");
+        campoGolsVisitante.setText("");
     }
 }

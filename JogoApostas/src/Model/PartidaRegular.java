@@ -29,9 +29,9 @@ public class PartidaRegular extends Partida{
         }
     }
 
-    public String toString(){
-        return getClubeMandante().getNome() + " x " +
-                getClubeVisitante().getNome() + " | " +
-                getData() + " " + getHora() + " " + getResultado();
+    @Override
+    public String toString() {
+        return getClubeMandante().getNome() + " x " + getClubeVisitante().getNome()
+                + " | " + getData() + " " + getHora();
     }
 }

@@ -131,7 +131,7 @@ public class TelaLogin extends JPanel {
         boolean cadastrou = loginController.cadastrar(participante, nome);
         if (!cadastrou) {
             JOptionPane.showMessageDialog(mainFrame,
-                    "Limite de 5 participantes atingido!",
+                    "Erro ao cadastrar participante!",
                     "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }

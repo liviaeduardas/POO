@@ -40,9 +40,6 @@ public class LoginController {
         if(nome == null || nome.trim().isEmpty()){
             return false;
         }
-        if(participantes.size() >= 5){
-            return false;
-        }
 
         participante.setNome(nome.trim());
         participante.setId(proximo++);
