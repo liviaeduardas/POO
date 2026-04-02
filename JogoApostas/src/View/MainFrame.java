@@ -1,5 +1,4 @@
 package View;
-
 import Controller.*;
 import Model.Administrador;
 import Model.Participante;
