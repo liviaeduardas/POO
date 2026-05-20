@@ -1,27 +1,25 @@
 package Model;
 
-public class Administrador extends Usuario{
-    private String nivelAesso;
+public class Administrador extends Usuario {
 
-    public Administrador(){
+    private String nivelAcesso;
+
+    public Administrador() {
         super();
-        this.nivelAesso = "TOTAL";
+        this.nivelAcesso = "TOTAL";
     }
 
     public Administrador(int id, String senha, String usuario, String nome) {
         super(id, senha, usuario, nome);
-        this.nivelAesso = "TOTAL";
+        this.nivelAcesso = "TOTAL";
     }
 
-    public void autenticar(){
+    // Polimorfismo: comportamento diferente do Participante
+    @Override
+    public void autenticar() {
         System.out.println("Administrador autenticado: " + getNome());
     }
 
-    public String getNivelAesso() {
-        return nivelAesso;
-    }
-
-    public void setNivelAesso(String nivelAesso) {
-        this.nivelAesso = nivelAesso;
-    }
+    public String getNivelAcesso() { return nivelAcesso; }
+    public void setNivelAcesso(String nivelAcesso) { this.nivelAcesso = nivelAcesso; }
 }

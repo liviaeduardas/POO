@@ -3,30 +3,25 @@ package Model;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class PartidaRegular extends Partida{
+/**
+ * Tipo concreto de partida — partida regular de campeonato.
+ * Implementa getResultado() herdado de Partida.
+ */
+public class PartidaRegular extends Partida {
 
-    public PartidaRegular() {
-    }
-
-    public PartidaRegular(Clube clubeMandante, Clube clubeVisitante, LocalDate data, LocalTime hora, int golMandante, int golVisitante, boolean encerrada) {
-        super(clubeMandante, clubeVisitante, data, hora, 0, 0, false);
-    }
+    public PartidaRegular() {}
 
     public PartidaRegular(Clube clubeMandante, Clube clubeVisitante, LocalDate data, LocalTime hora) {
-        super(clubeMandante, clubeVisitante, data, hora, 0, 0, false);
+        super(clubeMandante, clubeVisitante, data, hora);
     }
 
+    // Implementação do método abstrato — polimorfismo
+    @Override
     public String getResultado() {
-        if (!isEncerrada()) {
-            return "Não encerrada";
-        }
-        if (getGolMandante() > getGolVisitante()) {
-            return "Mandante";
-        } else if (getGolVisitante() > getGolMandante()) {
-            return "Visitante";
-        } else {
-            return "Empate";
-        }
+        if (!isEncerrada()) return "Não encerrada";
+        if (getGolMandante() > getGolVisitante()) return "Mandante";
+        if (getGolVisitante() > getGolMandante()) return "Visitante";
+        return "Empate";
     }
 
     @Override
